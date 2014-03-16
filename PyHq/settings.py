@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pyhq',
+    'characterscreen',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -87,5 +87,5 @@ STATICFILES_DIRS = (
 )
 
 #TEMPLATE_DIRS = (
-#    os.path.join (BASE_DIR, 'pyhq/templates/pyhq'),
+#    os.path.join (BASE_DIR, 'characterscreen/templates/characterscreen'),
 #)

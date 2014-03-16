@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from pyhq.models import *
+from characterscreen.models import *
 import evelink.api
 import evelink.char
 import evelink.eve
@@ -59,8 +59,10 @@ def settings(request):
 
     else:
         acct = Account.objects.all()
-        keyid = acct[0].key_id
-        vcode = acct[0].v_code
-    request.session['keyid'] = keyid
-    request.session['vcode'] = vcode
-    return render(request, 'settings.html', {'changes' : changes, 'keyid' : keyid, 'vcode' : vcode})
+        if acct:
+            keyid = acct[0].key_id
+            vcode = acct[0].v_code
+            request.session['keyid'] = keyid
+            request.session['vcode'] = vcode
+            return render(request, 'settings.html', {'changes' : changes, 'keyid' : keyid, 'vcode' : vcode})
+    return render(request, 'settings.html')
