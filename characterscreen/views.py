@@ -24,6 +24,7 @@ def character(request):
     corporation_standings = []
     agent_standings = []
 
+    # get the standings and order them into a list
     for x in char.standings().result['factions'].items():
         faction_standings.append(x[1])
     for x in char.standings().result['corps'].items():
@@ -35,13 +36,19 @@ def character(request):
     corporation_standings = sorted(corporation_standings, key=lambda k: k['name'])
     agent_standings = sorted(agent_standings, key=lambda k: k['name'])
 
-    return render(request, 'characteroverview.html', {'char' : char, 'faction_standings' : faction_standings,
+    #get character sheet and format it for template
+    char_sheet = char.character_sheet().result
+
+
+    return render(request, 'characteroverview.html', {'char_sheet' : char_sheet, 'faction_standings' : faction_standings,
                   'agent_standings' : agent_standings, 'corporation_standings' : corporation_standings})
 
 
 
 def settings(request):
     changes = ""
+    keyid = ""
+    vcode = ""
     if request.POST:
         keyid = request.POST.get("keyid")
         vcode = request.POST.get("vcode")
@@ -56,13 +63,10 @@ def settings(request):
             acct.save()
             changes = "Account Created!"
 
-
-    else:
-        acct = Account.objects.all()
-        if acct:
-            keyid = acct[0].key_id
-            vcode = acct[0].v_code
-            request.session['keyid'] = keyid
-            request.session['vcode'] = vcode
-            return render(request, 'settings.html', {'changes' : changes, 'keyid' : keyid, 'vcode' : vcode})
-    return render(request, 'settings.html')
+    acct = Account.objects.all()
+    if acct:
+        keyid = acct[0].key_id
+        vcode = acct[0].v_code
+        request.session['keyid'] = keyid
+        request.session['vcode'] = vcode
+    return render(request, 'settings.html', {'changes' : changes, 'keyid' : keyid, 'vcode' : vcode})
