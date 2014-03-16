@@ -1,0 +1,21 @@
+{% extends 'generic_base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <p>Character portrait here!</p>
+
+    </div>
+    <div class=""col-md-6">
+{% for o in faction_standings %}
+    <li>Faction: {{ o.name }} </li>
+    <li>Standing: {{ o.standing }}</li>
+
+{%  endfor %}
+
+
+
+</div>
+</div>
+
+{% endblock %}

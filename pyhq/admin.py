@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from pyhq.models import Character, Account
+
+admin.site.register(Character)
+admin.site.register(Account)

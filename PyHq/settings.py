@@ -85,3 +85,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "staticfiles"),
 )
+
+#TEMPLATE_DIRS = (
+#    os.path.join (BASE_DIR, 'pyhq/templates/pyhq'),
+#)
