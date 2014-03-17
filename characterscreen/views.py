@@ -11,37 +11,45 @@ def index(request):
     return render(request, 'generic_base.html')
 
 def character(request):
-    # get some character stuff
-    eve = evelink.eve.EVE()
-    api = evelink.api.API(api_key=(request.session['keyid'], request.session['vcode']))
-    # this is really kludgy, but I have no idea how else to to do it. Doing an account API call
-    # and unpacking the dict for the character ID
-    newacct = evelink.account.Account(api)
-    tempcharlist = newacct.characters()[0]
-    char_id = list(tempcharlist)[0]
-    char = evelink.char.Char(char_id = char_id, api=api)
-    faction_standings = []
-    corporation_standings = []
-    agent_standings = []
+    keyid = request.session['keyid']
+    if keyid:
+        # get some character stuff
+        eve = evelink.eve.EVE()
+        api = evelink.api.API(api_key=(request.session['keyid'], request.session['vcode']))
+        # this is really kludgy, but I have no idea how else to to do it. Doing an account API call
+        # and unpacking the dict for the character ID
+        newacct = evelink.account.Account(api)
+        tempcharlist = newacct.characters()[0]
+        char_id = list(tempcharlist)[0]
+        char = evelink.char.Char(char_id = char_id, api=api)
+        faction_standings = []
+        corporation_standings = []
+        agent_standings = []
 
-    # get the standings and order them into a list
-    for x in char.standings().result['factions'].items():
-        faction_standings.append(x[1])
-    for x in char.standings().result['corps'].items():
-        corporation_standings.append(x[1])
-    for x in char.standings().result['agents'].items():
-        agent_standings.append(x[1])
+        # get the standings and order them into a list
+        for x in char.standings().result['factions'].items():
+            faction_standings.append(x[1])
+        for x in char.standings().result['corps'].items():
+            corporation_standings.append(x[1])
+        for x in char.standings().result['agents'].items():
+            agent_standings.append(x[1])
 
-    faction_standings = sorted(faction_standings, key=lambda k: k['name'])
-    corporation_standings = sorted(corporation_standings, key=lambda k: k['name'])
-    agent_standings = sorted(agent_standings, key=lambda k: k['name'])
+        faction_standings = sorted(faction_standings, key=lambda k: k['name'])
+        corporation_standings = sorted(corporation_standings, key=lambda k: k['name'])
+        agent_standings = sorted(agent_standings, key=lambda k: k['name'])
 
-    #get character sheet and format it for template
-    char_sheet = char.character_sheet().result
+        #get character sheet and format it for template
+        char_sheet = char.character_sheet().result
+
+        #get current skill in training
+        current_training = char.current_training().result
 
 
-    return render(request, 'characteroverview.html', {'char_sheet' : char_sheet, 'faction_standings' : faction_standings,
-                  'agent_standings' : agent_standings, 'corporation_standings' : corporation_standings})
+        return render(request, 'characteroverview.html', {'char_sheet' : char_sheet,
+                                                          'faction_standings' : faction_standings,
+                                                          'agent_standings' : agent_standings,
+                                                          'corporation_standings' : corporation_standings,
+                                                          'current_training' : current_training})
 
 
 
