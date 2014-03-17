@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'characterscreen',
+    'PyHq.apps.characterscreen',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -83,7 +83,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "staticfiles"),
+    os.path.join(BASE_DIR, "PyHq", "static"),
 )
 
 #TEMPLATE_DIRS = (
