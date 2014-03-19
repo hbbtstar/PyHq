@@ -22,7 +22,7 @@ def character(request):
         newacct = evelink.account.Account(api)
         tempcharlist = newacct.characters()[0]
         char_id = list(tempcharlist)[0]
-        char = evelink.char.Char(char_id = char_id, api=api)
+        char = evelink.char.Char(char_id=char_id, api=api)
         faction_standings = []
         corporation_standings = []
         agent_standings = []
@@ -41,10 +41,25 @@ def character(request):
 
         #get character sheet and format it for template
         char_sheet = char.character_sheet().result
+        skill_tree = eve.skill_tree().result
 
         #get current skill in training
         current_training = char.current_training().result
-        skillname = getSkillName(eve.skill_tree().result, current_training['type_id'])
+        skillname = getSkillName(skill_tree, current_training['type_id'])
+
+        #pump up the skill dict a bit to make viewing easier
+
+        group_id_lookup = {}
+        for group_id, group_values in skill_tree.iteritems():
+            group_id_lookup[group_id] = group_values['name']
+
+        for s in char_sheet['skills']:
+            s['name'] = getSkillName(skill_tree, s['id'])
+
+
+
+
+
 
 
 
@@ -56,7 +71,9 @@ def character(request):
                                                           'agent_standings' : agent_standings,
                                                           'corporation_standings' : corporation_standings,
                                                           'current_training' : current_training,
-                                                          'skillname' : skillname})
+                                                          'skillname' : skillname,
+                                                          'skilltree' : eve.skill_tree().result,
+                                                          'skillgroups' : group_id_lookup})
 
 
 

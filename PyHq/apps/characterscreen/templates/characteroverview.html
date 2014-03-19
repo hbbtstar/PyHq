@@ -21,17 +21,37 @@
 
             </div>
         </div>
+        <div class="col-md-6">
+            <h3>Attributes</h3>
+            {% for attrib_key, attrib_value in char_sheet.attributes.items %}
+                <p> {{ attrib_key|capfirst }} {{ attrib_value.base }}
+                    Base + {{ attrib_value.bonus.value }} Bonus {{ attrib_value.total }}</p>
+            {% endfor %}
+        </div>
 
 
     <div class="col-md-8">
+    <h3> Standings </h3>
 {% for o in faction_standings %}
     <li>Faction: {{ o.name }} </li>
     <li>Standing: {{ o.standing }}</li>
-    <p>{{ char_sheet.clone.skillpoints }}</p>
 {%  endfor %}
 
+       {% for group_id, group_name in skillgroups.items %}
+    <h3>{{ group_name }} </h3>
+        {% for s in char_sheet.skills %}
+            {% if s.id in group_name %}
+            <p>Name: {{ s.name }}, SP{{ s.skillpoints }}, Level: {{ s.level }} </p>
+            {% endif %}
+        {% endfor %}
+        {% endfor %}
 
 
+</div>
+<div class="row">
+    <div class="col-md-8">
+
+        </div>
 </div>
 </div>
 
