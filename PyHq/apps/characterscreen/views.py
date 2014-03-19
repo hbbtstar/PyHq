@@ -39,32 +39,17 @@ def character(request):
         corporation_standings = sorted(corporation_standings, key=lambda k: k['name'])
         agent_standings = sorted(agent_standings, key=lambda k: k['name'])
 
-        #get character sheet and format it for template
+        #get character sheet and format it for template, make the skills all nice and alphabetical
         char_sheet = char.character_sheet().result
-        skill_tree = eve.skill_tree().result
+        skill_tree = []
+        for x in eve.skill_tree().result.items():
+            skill_tree.append(x[1])
+
+        skill_tree = sorted(skill_tree, key=lambda k: k['name'])
 
         #get current skill in training
         current_training = char.current_training().result
-        skillname = getSkillName(skill_tree, current_training['type_id'])
-
-        #pump up the skill dict a bit to make viewing easier
-
-        group_id_lookup = {}
-        for group_id, group_values in skill_tree.iteritems():
-            group_id_lookup[group_id] = group_values['name']
-
-        for s in char_sheet['skills']:
-            s['name'] = getSkillName(skill_tree, s['id'])
-
-
-
-
-
-
-
-
-
-
+        skillname = getSkillName(eve.skill_tree().result, current_training['type_id'])
 
         return render(request, 'characteroverview.html', {'char_sheet' : char_sheet,
                                                           'faction_standings' : faction_standings,
@@ -72,8 +57,8 @@ def character(request):
                                                           'corporation_standings' : corporation_standings,
                                                           'current_training' : current_training,
                                                           'skillname' : skillname,
-                                                          'skilltree' : eve.skill_tree().result,
-                                                          'skillgroups' : group_id_lookup})
+                                                          'skilltree' : skill_tree, })
+
 
 
 
