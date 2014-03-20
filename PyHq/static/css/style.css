@@ -1,0 +1,33 @@
+.roundedbox
+{
+    width:auto;
+    height:auto;
+    -webkit-border-radius: 10px 20px 20px 20px;
+    -moz-border-radius: 10px 20px 20px 20px;
+    border-radius: 10px 20px 20px 20px;
+    border:1px solid #000000;
+  background-color: #ffffff;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#d7dade));
+  background-image: -webkit-linear-gradient(top, #ffffff, #d7dade);
+  background-image:    -moz-linear-gradient(top, #ffffff, #d7dade);
+  background-image:      -o-linear-gradient(top, #ffffff, #d7dade);
+  background-image:         linear-gradient(to bottom, #ffffff, #d7dade);
+
+    padding:0 10px 10px 8px;
+    margin:10px 0 10px 0;
+}
+
+.roundedbox h5
+{
+    color: white;
+}
+
+.sidebar_title
+{
+    padding:1px 1px 1px 5px;
+    background-color: #696969;
+-webkit-box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.75);
+box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.75);
+    margin:10px 0 10px 0;
+}

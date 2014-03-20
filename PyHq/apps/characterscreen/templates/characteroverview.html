@@ -2,10 +2,10 @@
 
 {% block sidebar %}
 <div class="row col-md-12">
-
+    <div class="roundedbox">
         <div class="row">
             <div class="col-md-12">
-                <h3>Pilot Information</h3>
+                <div class="sidebar_title"><h5>Pilot Information</h5></div>
                 Pilot ID: {{ char_sheet.id }} <br>
                 Pilot Corp: {{ char_sheet.corp.name }} <br>
                 Pilot ISK: {{ char_sheet.balance }} <br>
@@ -14,27 +14,42 @@
 
             </div>
         </div>
+    </div>
+
+    <div class="roundedbox">
         <div class="row">
             <div class="col-md-12">
-                <h3>Skill Training</h3>
+                <div class="sidebar_title"><h5>Skill Training</h5></div>
                 Current Skill In Training: {{ skillname }} (Level {{ current_training.level }})<br>
 
             </div>
         </div>
+    </div>
+
+    <div class="roundedbox">
         <div class="row">
-        <div class="col-md-12">
-            <h3>Attributes</h3>
-            {% for attrib_key, attrib_value in char_sheet.attributes.items %}
-                <p> {{ attrib_key|capfirst }} {{ attrib_value.base }}
-                    Base + {{ attrib_value.bonus.value }} Bonus {{ attrib_value.total }}</p>
-            {% endfor %}
+            <div class="col-md-12">
+                <div class="sidebar_title"><h5>Attributes</h5></div>
+                {% for attrib_key, attrib_value in char_sheet.attributes.items %}
+                    <p> {{ attrib_key|capfirst }} {{ attrib_value.base }}
+                        Base + {{ attrib_value.bonus.value }} Bonus {{ attrib_value.total }}</p>
+                {% endfor %}
+            </div>
         </div>
-        </div>
+
+    </div>
+
 </div>
 
 {% endblock %}
 
 {% block content %}
+    <br>
+    <div class="col-md-12">
+        <img src="http://image.eveonline.com/Character/{{ char_sheet.id }}_128.jpg">
+    </div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
     <ul class="nav nav-tabs">
     <li class="active"><a href="#skills" data-toggle="tab">Skills</a></li>
     <li><a href="#skillqueue" data-toggle="tab">Skill Queue</a></li>
@@ -101,8 +116,26 @@
                             </div>
             </div>
             <div class="tab-pane" id="skillqueue">
-                <div class="row">
-                    <p> implemented soon!</p>
+
+                    {% for s in skill_queue %}
+                        <div class="row">
+                            <div class="col-md-4"> {{ s.name }} </div>
+                            <div class="col-md-4">&nbsp;</div>
+                            <div class="col-md-4">Level: {{ s.level }}
+                                <br>
+                                Finished In: {{ s.end_date }}
+                            </div>
+                        </div>
+                        <div class="row col-md-12">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="{{ s.percent_done }}"
+                                     aria-valuemin="0" aria-valuemax="100" style="width: {{ s.percent_done }}%;">
+                                {{ s.percent_done }}% Complete
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endfor %}
                 </div>
             </div>
         </div>

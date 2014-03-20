@@ -5,6 +5,7 @@ import evelink.eve
 import evelink.account
 from PyHq.libs.pyhqfunctions import *
 from datetime import datetime, timedelta
+import time
 
 from PyHq.apps.characterscreen.models import *
 
@@ -62,10 +63,11 @@ def character(request):
         skill_queue = char.skill_queue().result
         for x in skill_queue:
             x['name'] = getSkillName(eve.skill_tree().result, x['type_id'])
-            sec = timedelta(seconds=x['end_ts'])
+            sec = timedelta(seconds=(x['end_ts'] - time.time()))
             d = datetime(1,1,1) + sec
             x['end_date'] = "{0}d {1}h {2}m {3}s".format(d.day - 1, d.hour, d.minute, d.second)
-
+        # get us some percentages
+            x['percent_done'] = round(100 * x['start_sp'] / x['end_sp'])
         #get certificates
 
 
