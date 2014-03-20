@@ -4,6 +4,7 @@ import evelink.char
 import evelink.eve
 import evelink.account
 from PyHq.libs.pyhqfunctions import *
+from datetime import datetime, timedelta
 
 from PyHq.apps.characterscreen.models import *
 
@@ -44,6 +45,8 @@ def character(request):
         skill_tree = []
         for x in eve.skill_tree().result.items():
             skill_tree.append(x[1])
+
+        #pop out the fake skills group so it doesn't show in the final page
         for x in list(skill_tree):
             if x['id'] == 505:
                 skill_tree.remove(x)
@@ -55,39 +58,26 @@ def character(request):
         current_training = char.current_training().result
         skillname = getSkillName(eve.skill_tree().result, current_training['type_id'])
 
+        #get skill queue names too and format the numbers nicely
+        skill_queue = char.skill_queue().result
+        for x in skill_queue:
+            x['name'] = getSkillName(eve.skill_tree().result, x['type_id'])
+            sec = timedelta(seconds=x['end_ts'])
+            d = datetime(1,1,1) + sec
+            x['end_date'] = "{0}d {1}h {2}m {3}s".format(d.day - 1, d.hour, d.minute, d.second)
+
+        #get certificates
+
+
         return render(request, 'characteroverview.html', {'char_sheet' : char_sheet,
                                                           'faction_standings' : faction_standings,
                                                           'agent_standings' : agent_standings,
                                                           'corporation_standings' : corporation_standings,
                                                           'current_training' : current_training,
                                                           'skillname' : skillname,
-                                                          'skilltree' : skill_tree, })
+                                                          'skilltree' : skill_tree,
+                                                          'skill_queue' : skill_queue})
 
 
 
 
-def settings(request):
-    changes = ""
-    keyid = ""
-    vcode = ""
-    if request.POST:
-        keyid = request.POST.get("keyid")
-        vcode = request.POST.get("vcode")
-        acct = Account.objects.filter(key_id=keyid)
-        if acct:
-            acct[0].v_code = vcode
-            acct[0].key_id = keyid
-            acct[0].save()
-            changes = "Changes Saved!"
-        else:
-            acct = Account(key_id=request.POST.get("keyid"), v_code=request.POST.get("vcode"))
-            acct.save()
-            changes = "Account Created!"
-
-    acct = Account.objects.all()
-    if acct:
-        keyid = acct[0].key_id
-        vcode = acct[0].v_code
-        request.session['keyid'] = keyid
-        request.session['vcode'] = vcode
-    return render(request, 'settings.html', {'changes' : changes, 'keyid' : keyid, 'vcode' : vcode})

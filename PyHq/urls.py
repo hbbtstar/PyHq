@@ -10,4 +10,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^characterscreen/', include('PyHq.apps.characterscreen.urls')),
+    url(r'^settings/', include('PyHq.apps.settings.urls')),
 )

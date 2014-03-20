@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'PyHq.apps.characterscreen',
+    'PyHq.apps.settings'
 )
 
 MIDDLEWARE_CLASSES = (

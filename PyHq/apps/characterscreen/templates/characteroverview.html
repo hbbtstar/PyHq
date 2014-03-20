@@ -35,8 +35,9 @@
 {% endblock %}
 
 {% block content %}
-    <ul class="nav nav-tabs" id="myTab">
+    <ul class="nav nav-tabs">
     <li class="active"><a href="#skills" data-toggle="tab">Skills</a></li>
+    <li><a href="#skillqueue" data-toggle="tab">Skill Queue</a></li>
     <li><a href="#standings" data-toggle="tab">Standings</a></li>
     </ul>
         <div class="tab-content">
@@ -98,6 +99,11 @@
                             </div>
                                 {% endfor %}
                             </div>
+            </div>
+            <div class="tab-pane" id="skillqueue">
+                <div class="row">
+                    <p> implemented soon!</p>
+                </div>
             </div>
         </div>
 
