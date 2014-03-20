@@ -1,10 +1,10 @@
 {% extends 'generic_base.html' %}
 
-{% block content %}
+{% block sidebar %}
 <div class="row col-md-12">
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <h3>Pilot Information</h3>
                 Pilot ID: {{ char_sheet.id }} <br>
                 Pilot Corp: {{ char_sheet.corp.name }} <br>
@@ -15,69 +15,95 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-12">
                 <h3>Skill Training</h3>
                 Current Skill In Training: {{ skillname }} (Level {{ current_training.level }})<br>
 
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="row">
+        <div class="col-md-12">
             <h3>Attributes</h3>
             {% for attrib_key, attrib_value in char_sheet.attributes.items %}
                 <p> {{ attrib_key|capfirst }} {{ attrib_value.base }}
                     Base + {{ attrib_value.bonus.value }} Bonus {{ attrib_value.total }}</p>
             {% endfor %}
         </div>
-
-
-    <div class="col-md-12">
-    <h3> Standings </h3>
-{% for o in faction_standings %}
-    <li>Faction: {{ o.name }} </li>
-    <li>Standing: {{ o.standing }}</li>
-{%  endfor %}
-
-       {% for group in skilltree %}
-           {% if group.name != 'Fake Skills' %}
-    <div class="row col-md-12"><h3>{{ group.name }}</h3></div>
-           <div class="row">
-<div class="col-md-3">
-    Skill
-</div>
-
-<div class="col-md-3">
-    Rank
-</div>
-<div class="col-md-3">
-    Level
-</div>
-<div class="col-md-3">
-    Skill Points
-</div>
-</div>
-           {% endif %}
-           {% for s in char_sheet.skills %}
-               {% for g, v in group.skills.items %}
-                   {% if s.id == g and group.name %}
-                       <div class="row">
-              <div class="col-md-3">{{ v.name }} </div>
-                       <div class="col-md-3">{{ v.rank }}</div>
-                       <div class="col-md-3"> {{ s.level }}</div>
-                       <div class="col-md-3">{{ s.skillpoints }}</div>
-                       </div>
-                   {% endif %}
-                   {% endfor %}
-    {% endfor %}
-    {% endfor %}
-
-
-
-</div>
-<div class="row">
-    <div class="col-md-8">
-
         </div>
 </div>
-</div>
+
+{% endblock %}
+
+{% block content %}
+    <ul class="nav nav-tabs" id="myTab">
+    <li class="active"><a href="#skills" data-toggle="tab">Skills</a></li>
+    <li><a href="#standings" data-toggle="tab">Standings</a></li>
+    </ul>
+        <div class="tab-content">
+            <div class="tab-pane" id="standings">
+                <div class="col-md-12">
+                    <h3> Standings </h3>
+                        {% for o in faction_standings %}
+                            <li>Faction: {{ o.name }} </li>
+                            <li>Standing: {{ o.standing }}</li>
+                        {%  endfor %}
+                </div>
+            </div>
+
+            <div class="tab-pane active" id="skills">
+                <div class="panel-group" id="accordion">
+
+                    {% for group in skilltree %}
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseg{{ forloop.counter }}">{{ group.name }}
+                                    </a></h4>
+
+                                </div>
+
+                                <div id="collapseg{{ forloop.counter }}" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                Skill
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                Rank
+                                            </div>
+                                            <div class="col-md-3">
+                                                Level
+                                            </div>
+                                            <div class="col-md-3">
+                                                Skill Points
+                                            </div>
+                                        </div>
+
+                                        {% for s in char_sheet.skills %}
+                                         {% for g, v in group.skills.items %}
+                                          {% if s.id == g and group.name %}
+                                           <div class="row">
+                                            <div class="col-md-3">{{ v.name }} </div>
+                                            <div class="col-md-3">{{ v.rank }}</div>
+                                            <div class="col-md-3"> {{ s.level }}</div>
+                                            <div class="col-md-3">{{ s.skillpoints }}</div>
+                                           </div>
+                                           {% endif %}
+                                        {% endfor %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                                {% endfor %}
+                            </div>
+            </div>
+        </div>
+
+
+
+
+
 
 {% endblock %}

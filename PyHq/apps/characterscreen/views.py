@@ -44,6 +44,10 @@ def character(request):
         skill_tree = []
         for x in eve.skill_tree().result.items():
             skill_tree.append(x[1])
+        for x in list(skill_tree):
+            if x['id'] == 505:
+                skill_tree.remove(x)
+
 
         skill_tree = sorted(skill_tree, key=lambda k: k['name'])
 
