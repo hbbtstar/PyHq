@@ -6,12 +6,12 @@
     -moz-border-radius: 10px 20px 20px 20px;
     border-radius: 10px 20px 20px 20px;
     border:1px solid #000000;
-  background-color: #ffffff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#d7dade));
-  background-image: -webkit-linear-gradient(top, #ffffff, #d7dade);
-  background-image:    -moz-linear-gradient(top, #ffffff, #d7dade);
-  background-image:      -o-linear-gradient(top, #ffffff, #d7dade);
-  background-image:         linear-gradient(to bottom, #ffffff, #d7dade);
+  background-color: #f0f1f2;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f0f1f2), to(#d7dade));
+  background-image: -webkit-linear-gradient(top, #f0f1f2, #d7dade);
+  background-image:    -moz-linear-gradient(top, #f0f1f2, #d7dade);
+  background-image:      -o-linear-gradient(top, #f0f1f2, #d7dade);
+  background-image:         linear-gradient(to bottom, #f0f1f2, #d7dade);
 
     padding:0 10px 10px 8px;
     margin:10px 0 10px 0;
