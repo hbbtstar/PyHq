@@ -30,6 +30,7 @@ def character(request):
         agent_standings = []
         char_standings = char.standings().result
         char_sheet = char.character_sheet().result
+        eve_skill_tree = eve.skill_tree().result
         # get effective standings by applying the effective standings equation to our standings
         conn_dip_skills = {}
         conn_dip_skills['diplo'] = 0
@@ -44,20 +45,27 @@ def character(request):
 
         for v, s in char_standings['factions'].items():
             if s['standing'] < 0:
-                char_standings['factions'][s['id']]['e_standing'] = (s['standing'] +
-                                                ((10-s['standing'])*(0.04*(conn_dip_skills['diplo']))))
+                char_standings['factions'][s['id']]['e_standing'] = round(
+                    (s['standing'] +((10-s['standing'])*(0.04*(conn_dip_skills['diplo'])))), 2)
             else:
-                char_standings['factions'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn'])))
+                char_standings['factions'][s['id']]['e_standing'] = round(
+                    s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn']))), 2)
         for v,s in char_standings['agents'].items():
             if s['standing'] < 0:
-                char_standings['agents'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['diplo'])))
+                char_standings['agents'][s['id']]['e_standing'] = round(
+                    s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['diplo']))), 2)
             else:
-                char_standings['agents'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn'])))
+                char_standings['agents'][s['id']]['e_standing'] = round(
+                    s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn']))), 2)
         for v,s in char_standings['corps'].items():
             if s['standing'] < 0:
-                char_standings['corps'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['diplo'])))
+                char_standings['corps'][s['id']]['e_standing'] = round(
+                    s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['diplo']))),2)
             else:
-                char_standings['corps'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn'])))
+                char_standings['corps'][s['id']]['e_standing'] = round(
+                    s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn']))), 2)
+
+
 
 
         # get the standings and order them into a list
@@ -75,7 +83,7 @@ def character(request):
         #get character sheet and format it for template, make the skills all nice and alphabetical
 
         skill_tree = []
-        for x in eve.skill_tree().result.items():
+        for x in eve_skill_tree.items():
             skill_tree.append(x[1])
 
         #pop out the fake skills group so it doesn't show in the final page
@@ -88,12 +96,12 @@ def character(request):
 
         #get current skill in training
         current_training = char.current_training().result
-        skillname = getSkillName(eve.skill_tree().result, current_training['type_id'])
+        skillname = getSkillName(eve_skill_tree, current_training['type_id'])
 
         #get skill queue names too and format the numbers nicely
         skill_queue = char.skill_queue().result
         for x in skill_queue:
-            x['name'] = getSkillName(eve.skill_tree().result, x['type_id'])
+            x['name'] = getSkillName(eve_skill_tree, x['type_id'])
             sec = timedelta(seconds=(x['end_ts'] - time.time()))
             d = datetime(1,1,1) + sec
             x['end_date'] = "{0}d {1}h {2}m {3}s".format(d.day - 1, d.hour, d.minute, d.second)
