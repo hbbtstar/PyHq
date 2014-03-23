@@ -1,4 +1,4 @@
-
+import evelink
 # kinda klunky, but walks through skill tree dicts to get name for skill id that current_training returns
 def getSkillName(skill_tree, type_id):
     for k, v in skill_tree.iteritems():
@@ -12,3 +12,5 @@ def getSkillName(skill_tree, type_id):
                     for k2, v2 in v1.iteritems():
                         if k2 == type_id:
                             return v2['name']
+
+

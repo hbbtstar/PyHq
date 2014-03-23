@@ -56,14 +56,39 @@
     </ul>
         <div class="tab-content">
             <div class="tab-pane" id="standings">
-                <div class="col-md-12">
-                    <h3> Standings </h3>
-                        {% for o in faction_standings %}
-                            <li>Faction: {{ o.name }} </li>
-                            <li>Standing: {{ o.standing }}</li>
+                    <div class="row">
+                        <div class="col-md-6">Entity Name</div>
+                        <div class="col-md-2">Entity Type</div>
+                        <div class="col-md-2">Raw Standing</div>
+                        <div class="col-md-2">Effective Standing</div>
+                    </div>
+                        {% for f in faction_standings %}
+                            <div class="row">
+                                <div class="col-md-6">{{ f.name }}</div>
+                                <div class="col-md-2">Faction</div>
+                                <div class="col-md-2">{{ f.standing }}</div>
+                                <div class="col-md-2"> {{ f.e_standing }}</div>
+                            </div>
                         {%  endfor %}
-                </div>
+                        {% for c in corporation_standings %}
+                            <div class="row">
+                                <div class="col-md-6">{{ c.name }}</div>
+                                <div class="col-md-2">Corporation</div>
+                                <div class="col-md-2">{{ c.standing }}</div>
+                                <div class="col-md-2">{{ c.e_standing }}</div>
+                            </div>
+                        {% endfor %}
+                        {% for a in agent_standings %}
+                            <div class="row">
+                                <div class="col-md-6">{{ a.name }} </div>
+                                <div class="col-md-2">Agent</div>
+                                <div class="col-md-2">{{ a.standing }}</div>
+                                <div class="col-md-2">{{ a.e_standing }}</div>
+                            </div>
+                        {% endfor %}
+
             </div>
+
 
             <div class="tab-pane active" id="skills">
                 <div class="panel-group" id="accordion">
@@ -71,8 +96,8 @@
                     {% for group in skilltree %}
 
                             <div class="panel panel-default">
-                                <div class="panel-heading">
-                                <h4 class="panel-title">
+                                <div class="panel-heading" >
+                                <h4 class="panel-title" >
                                 <a data-toggle="collapse" data-parent="#accordion"
                                    href="#collapseg{{ forloop.counter }}">{{ group.name }}
                                     </a></h4>

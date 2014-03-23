@@ -87,6 +87,6 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "PyHq", "static"),
 )
 
-#TEMPLATE_DIRS = (
-#    os.path.join (BASE_DIR, 'characterscreen/templates/characterscreen'),
-#)
+TEMPLATE_DIRS = (
+   os.path.join (BASE_DIR, 'PyHq', 'templates'),
+)

@@ -28,13 +28,44 @@ def character(request):
         faction_standings = []
         corporation_standings = []
         agent_standings = []
+        char_standings = char.standings().result
+        char_sheet = char.character_sheet().result
+        # get effective standings by applying the effective standings equation to our standings
+        conn_dip_skills = {}
+        conn_dip_skills['diplo'] = 0
+        conn_dip_skills['conn'] = 0
+
+        for i in char_sheet['skills']:
+            if i['id'] == 3357:
+                conn_dip_skills['diplo'] = i['level']
+
+            if i['id'] == 3359:
+                conn_dip_skills['conn'] = i['level']
+
+        for v, s in char_standings['factions'].items():
+            if s['standing'] < 0:
+                char_standings['factions'][s['id']]['e_standing'] = (s['standing'] +
+                                                ((10-s['standing'])*(0.04*(conn_dip_skills['diplo']))))
+            else:
+                char_standings['factions'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn'])))
+        for v,s in char_standings['agents'].items():
+            if s['standing'] < 0:
+                char_standings['agents'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['diplo'])))
+            else:
+                char_standings['agents'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn'])))
+        for v,s in char_standings['corps'].items():
+            if s['standing'] < 0:
+                char_standings['corps'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['diplo'])))
+            else:
+                char_standings['corps'][s['id']]['e_standing'] = s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn'])))
+
 
         # get the standings and order them into a list
-        for x in char.standings().result['factions'].items():
+        for x in char_standings['factions'].items():
             faction_standings.append(x[1])
-        for x in char.standings().result['corps'].items():
+        for x in char_standings['corps'].items():
             corporation_standings.append(x[1])
-        for x in char.standings().result['agents'].items():
+        for x in char_standings['agents'].items():
             agent_standings.append(x[1])
 
         faction_standings = sorted(faction_standings, key=lambda k: k['name'])
@@ -42,7 +73,7 @@ def character(request):
         agent_standings = sorted(agent_standings, key=lambda k: k['name'])
 
         #get character sheet and format it for template, make the skills all nice and alphabetical
-        char_sheet = char.character_sheet().result
+
         skill_tree = []
         for x in eve.skill_tree().result.items():
             skill_tree.append(x[1])
