@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<!--Include jQuery -->
+<script type="text/javascript" src="{% static 'js/jquery-1.11.0.js' %}"></script>
+<link rel="stylesheet" href="{%  static 'css/bootstrap.css' %}">
+<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<!--Include the slidepanel plugin -->
+<body>
+<div class="container-fluid" id="bg">
+{% block page %}
+
+{% endblock %}
+</div>
+</body>
+</html>

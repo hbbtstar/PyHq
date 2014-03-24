@@ -1,4 +1,5 @@
 {% extends 'generic_base.html' %}
+{% load humanize %}
 
 {% block sidebar %}
 <div class="row col-md-12">
@@ -8,9 +9,9 @@
                 <div class="sidebar_title"><h5>Pilot Information</h5></div>
                 Pilot ID: {{ char_sheet.id }} <br>
                 Pilot Corp: {{ char_sheet.corp.name }} <br>
-                Pilot ISK: {{ char_sheet.balance }} <br>
-                Pilot SP: {{ char_sheet.skillpoints }} <br>
-                Pilot Clone: {{ char_sheet.clone.name }} ({{ char_sheet.clone.skillpoints }} SP) <br>
+                Pilot ISK: {{ char_sheet.balance|intcomma }} <br>
+                Pilot SP: {{ char_sheet.skillpoints|intcomma }} <br>
+                Pilot Clone: {{ char_sheet.clone.name }} ({{ char_sheet.clone.skillpoints|intcomma }} SP) <br>
 
             </div>
         </div>
@@ -129,7 +130,7 @@
                                             <div class="col-md-3">{{ v.name }} </div>
                                             <div class="col-md-3">{{ v.rank }}</div>
                                             <div class="col-md-3"> {{ s.level }}</div>
-                                            <div class="col-md-3">{{ s.skillpoints }}</div>
+                                            <div class="col-md-3">{{ s.skillpoints|intcomma }}</div>
                                            </div>
                                            {% endif %}
                                         {% endfor %}
