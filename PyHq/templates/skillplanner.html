@@ -1,5 +1,5 @@
-{% extends includes_base.html %}
-
+{% extends 'includes_base.html' %}
+{% block page %}
 <script>$(function() {
   $("#skill_filter").autocomplete({
     source: "/api/get_skills/",
@@ -29,3 +29,4 @@
     </div>
 
 </div>
+{% endblock %}

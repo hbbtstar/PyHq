@@ -14,11 +14,14 @@ def index(request):
     return render(request, 'generic_base.html')
 
 def character(request):
+    if Skill.objects.filter().count():
+        EveSkillsToDB()
     keyid = request.session.get('keyid')
     if keyid:
         # get some character stuff
         eve = evelink.eve.EVE()
         api = evelink.api.API(api_key=(request.session['keyid'], request.session['vcode']))
+        eve_skill_tree = eve.skill_tree().result
         # this is really kludgy, but I have no idea how else to to do it. Doing an account API call
         # and unpacking the dict for the character ID
         newacct = evelink.account.Account(api)
@@ -30,7 +33,6 @@ def character(request):
         agent_standings = []
         char_standings = char.standings().result
         char_sheet = char.character_sheet().result
-        eve_skill_tree = eve.skill_tree().result
         # get effective standings by applying the effective standings equation to our standings
         conn_dip_skills = {}
         conn_dip_skills['diplo'] = 0
