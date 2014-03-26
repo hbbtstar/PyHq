@@ -17,16 +17,16 @@ class Account(models.Model):
 
 
 class Skill(models.Model):
-    skill_id = models.IntegerField()
+    skill_id = models.IntegerField(primary_key=True)
     group_id = models.IntegerField()
     name = models.CharField(max_length=100)
     description = models.TextField()
     rank = models.IntegerField()
-    primaryAttribute = models.CharField(max_length=20)
-    secondaryAttribute = models.CharField(max_length=20)
+    primaryAttribute = models.CharField(max_length=20, null=True)
+    secondaryAttribute = models.CharField(max_length=20, null=True)
 
 class SkillGroup(models.Model):
-    skill_group_id = models.IntegerField()
+    skill_group_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length="100")
 
 class RequiredSkill(models.Model):

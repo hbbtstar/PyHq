@@ -10,18 +10,17 @@ import time
 from PyHq.apps.characterscreen.models import *
 
 
-def index(request):
-    return render(request, 'generic_base.html')
+def debug(request):
+    EveSkillsToDB()
+    skills = Skill.objects.all()
+    return render(request, 'debugpage.html', {'skills' : skills})
 
 def character(request):
-    if Skill.objects.filter().count():
-        EveSkillsToDB()
     keyid = request.session.get('keyid')
     if keyid:
         # get some character stuff
         eve = evelink.eve.EVE()
         api = evelink.api.API(api_key=(request.session['keyid'], request.session['vcode']))
-        eve_skill_tree = eve.skill_tree().result
         # this is really kludgy, but I have no idea how else to to do it. Doing an account API call
         # and unpacking the dict for the character ID
         newacct = evelink.account.Account(api)
@@ -84,26 +83,35 @@ def character(request):
 
         #get character sheet and format it for template, make the skills all nice and alphabetical
 
-        skill_tree = []
-        for x in eve_skill_tree.items():
-            skill_tree.append(x[1])
+        group_tree = SkillGroup.objects.all().exclude(skill_group_id=505)
+        for s in char_sheet['skills']:
+            temp_skill = Skill.objects.get(skill_id=s['id'])
+            s['name'] = temp_skill.name
+            s['group_id'] = temp_skill.group_id
+            s['rank'] = temp_skill.rank
+        group_tree.order_by('name')
+
+
 
         #pop out the fake skills group so it doesn't show in the final page
-        for x in list(skill_tree):
-            if x['id'] == 505:
-                skill_tree.remove(x)
+        # for x in skill_tree:
+        #     if x['skill_group_id'] == 505:
+        #         skill_tree.remove(x)
 
 
-        skill_tree = sorted(skill_tree, key=lambda k: k['name'])
+        # skill_tree = sorted(skill_tree, key=lambda k: k['name'])
 
         #get current skill in training
         current_training = char.current_training().result
-        skillname = getSkillName(eve_skill_tree, current_training['type_id'])
+        skillname = ''
+        current_training['name'] = Skill.objects.get(skill_id=current_training['type_id']).name
+
+
 
         #get skill queue names too and format the numbers nicely
         skill_queue = char.skill_queue().result
         for x in skill_queue:
-            x['name'] = getSkillName(eve_skill_tree, x['type_id'])
+            x['name'] = Skill.objects.filter(skill_id=x['type_id'])[0].name
             sec = timedelta(seconds=(x['end_ts'] - time.time()))
             d = datetime(1,1,1) + sec
             x['end_date'] = "{0}d {1}h {2}m {3}s".format(d.day - 1, d.hour, d.minute, d.second)
@@ -113,13 +121,12 @@ def character(request):
 
 
         return render(request, 'characteroverview.html', {'char_sheet' : char_sheet,
-                                                          'faction_standings' : faction_standings,
-                                                          'agent_standings' : agent_standings,
-                                                          'corporation_standings' : corporation_standings,
-                                                          'current_training' : current_training,
-                                                          'skillname' : skillname,
-                                                          'skilltree' : skill_tree,
-                                                          'skill_queue' : skill_queue})
+                                                          'faction_standings': faction_standings,
+                                                          'agent_standings': agent_standings,
+                                                          'corporation_standings': corporation_standings,
+                                                          'current_training': current_training,
+                                                          'group_tree': group_tree,
+                                                          'skill_queue': skill_queue})
 
 
 

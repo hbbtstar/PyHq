@@ -21,7 +21,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="sidebar_title"><h5>Skill Training</h5></div>
-                Current Skill In Training: {{ skillname }} (Level {{ current_training.level }})<br>
+                Current Skill In Training: {{ current_training.name }} (Level {{ current_training.level }})<br>
 
             </div>
         </div>
@@ -94,7 +94,7 @@
             <div class="tab-pane active" id="skills">
                 <div class="panel-group" id="accordion">
 
-                    {% for group in skilltree %}
+                    {% for group in group_tree %}
 
                             <div class="panel panel-default">
                                 <div class="panel-heading" >
@@ -124,16 +124,16 @@
                                         </div>
 
                                         {% for s in char_sheet.skills %}
-                                         {% for g, v in group.skills.items %}
-                                          {% if s.id == g and group.name %}
+{#                                         {% for g, v in group.skills.items %}#}
+                                          {% if s.group_id == group.skill_group_id %}
                                            <div class="row">
-                                            <div class="col-md-3">{{ v.name }} </div>
-                                            <div class="col-md-3">{{ v.rank }}</div>
+                                            <div class="col-md-3">{{ s.name }} </div>
+                                            <div class="col-md-3">{{ s.rank }}</div>
                                             <div class="col-md-3"> {{ s.level }}</div>
                                             <div class="col-md-3">{{ s.skillpoints|intcomma }}</div>
                                            </div>
                                            {% endif %}
-                                        {% endfor %}
+{#                                        {% endfor %}#}
                                         {% endfor %}
                                     </div>
                                 </div>
