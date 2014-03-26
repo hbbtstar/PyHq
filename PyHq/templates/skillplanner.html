@@ -1,8 +1,8 @@
 {% extends 'includes_base.html' %}
 {% block page %}
 <script>$(function() {
-  $("#skill_filter").autocomplete({
-    source: "/api/get_skills/",
+  $("#skills").autocomplete({
+    source: "api/get_skills/",
     minLength: 2
   });
 });</script>
@@ -13,7 +13,7 @@
             <div class="col-md-12">
                 <div class="ui-widget">
                     <label for="skills">Skill: </label>
-                    <input id="skill_filter">
+                    <input id="skills">
                 </div>
             </div>
         </div>
