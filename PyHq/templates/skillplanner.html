@@ -3,9 +3,27 @@
 <script>$(function() {
   $("#skills").autocomplete({
     source: "api/get_skills/",
-    minLength: 2
+    minLength: 2,
+    select: function (event, ui) {
+        var skill = ui.item.value
+        var url = "api/load_skills/?skill=" + skill
+        jQuery.getJSON(url, function( data ) {
+            document.getElementById("skillname").innerHTML=data[0].name
+            document.getElementById("skillrank").innerHTML=data[0].rank
+            document.getElementById("primaryattribute").innerHTML=data[0].primaryAttribute
+            document.getElementById("secondaryattribute").innerHTML=data[0].secondaryAttribute
+        });
+
+
+    }
   });
-});</script>
+
+
+});
+
+
+
+</script>
 
 <div class="row">
     <div class="col-md-6">
@@ -19,7 +37,37 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#general" data-toggle="tab">General</a></li>
+                    <li><a href="#description" data-toggle="tab">Description</a></li>
+                    <li><a href="#prereqs" data-toggle="tab">Pre-Reqs</a></li>
+                    <li><a href="#deps" data-toggle="tab">Dependencies</a></li>
+                    <li><a href="#skillpoints" data-toggle="tab">Skill Points</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="general">
+                        <div class="row">
+                            <div class="col-md-6">Skill Name</div>
+                            <div class="col-md-6" id="skillname">Skill name update</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">Skill Rank</div>
+                            <div class="col-md-6" id="skillrank">Skill Rank update</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">Skill Price</div>
+                            <div class="col-md-6">Skill Price Update</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">Primary Attribute</div>
+                            <div class="col-md-6" id="primaryattribute">Primary Attribute Update</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">Secondary Attribute</div>
+                            <div class="col-md-6" id="secondaryattribute">Secondary Attribute Update</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
