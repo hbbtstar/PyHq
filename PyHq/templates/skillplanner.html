@@ -12,6 +12,12 @@
             document.getElementById("skillrank").innerHTML=data[0].rank
             document.getElementById("primaryattribute").innerHTML=data[0].primaryAttribute
             document.getElementById("secondaryattribute").innerHTML=data[0].secondaryAttribute
+            document.getElementById("description").innerHTML=data[0].description
+            var prereq_html = ""
+            $.each(data[0].prereqs, function(key, value) {
+                prereq_html += "<li>" + key + ": " + value + "</li>"
+            });
+            document.getElementById("prereq_skills").innerHTML=prereq_html
         });
 
 
@@ -65,6 +71,20 @@
                         <div class="row">
                             <div class="col-md-6">Secondary Attribute</div>
                             <div class="col-md-6" id="secondaryattribute">Secondary Attribute Update</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="description">
+                        <div class="row">
+                            <div class="col-md-6" id="description"> Description Update</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="prereqs">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul id ="prereq_skills">
+
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

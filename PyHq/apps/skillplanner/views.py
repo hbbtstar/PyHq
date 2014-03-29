@@ -32,10 +32,15 @@ def load_skills(request):
         skill_json['skill_id'] = skill.skill_id
         skill_json['name'] = skill.name
         skill_json['rank'] = skill.rank
-        skill_json['primaryAttribute'] = skill.primaryAttribute
-        skill_json['secondaryAttribute'] = skill.secondaryAttribute
+        skill_json['primaryAttribute'] = skill.primaryAttribute.title()
+        skill_json['secondaryAttribute'] = skill.secondaryAttribute.title()
         skill_json['description'] = skill.description
-
+        skill_json['prereqs'] = {}
+        prereq_set = RequiredSkill.objects.filter(from_skill_id=skill.skill_id)
+        for i in prereq_set:
+            prereq_skill = Skill.objects.get(skill_id=i.required_id)
+            prereq_name = prereq_skill.name
+            skill_json['prereqs'][prereq_name] = i.required_level
         results.append(skill_json)
         data = json.dumps(results)
     else:
