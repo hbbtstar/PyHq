@@ -12,6 +12,14 @@ from PyHq.apps.characterscreen.models import *
 
 def debug(request):
     EveSkillsToDB()
+    eve = evelink.eve.EVE()
+    api = evelink.api.API(api_key=(request.session['keyid'], request.session['vcode']))
+    newacct = evelink.account.Account(api)
+    tempcharlist = newacct.characters()[0]
+    char_id = list(tempcharlist)[0]
+    char = evelink.char.Char(char_id=char_id, api=api)
+    tempaccount = Account.objects.get(v_code=request.session['vcode'])
+    CreateChar(char_id, api, tempaccount)
     skills = Skill.objects.all()
     return render(request, 'debugpage.html', {'skills' : skills})
 
@@ -26,18 +34,20 @@ def character(request):
         newacct = evelink.account.Account(api)
         tempcharlist = newacct.characters()[0]
         char_id = list(tempcharlist)[0]
-        char = evelink.char.Char(char_id=char_id, api=api)
+        # char = evelink.char.Char(char_id=char_id, api=api)
+        UpdateChar(char_id, api)
+        char_object = Character.objects.get(id=char_id)
         faction_standings = []
         corporation_standings = []
         agent_standings = []
-        char_standings = char.standings().result
-        char_sheet = char.character_sheet().result
+        char_standings = char_object.standings
+        char_sheet = char_object
         # get effective standings by applying the effective standings equation to our standings
         conn_dip_skills = {}
         conn_dip_skills['diplo'] = 0
         conn_dip_skills['conn'] = 0
 
-        for i in char_sheet['skills']:
+        for i in char_sheet.skills:
             if i['id'] == 3357:
                 conn_dip_skills['diplo'] = i['level']
 
@@ -61,7 +71,7 @@ def character(request):
         for v,s in char_standings['corps'].items():
             if s['standing'] < 0:
                 char_standings['corps'][s['id']]['e_standing'] = round(
-                    s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['diplo']))),2)
+                    s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['diplo']))), 2)
             else:
                 char_standings['corps'][s['id']]['e_standing'] = round(
                     s['standing'] + ((10-s['standing'])*(0.04*(conn_dip_skills['conn']))), 2)
@@ -84,7 +94,7 @@ def character(request):
         #get character sheet and format it for template, make the skills all nice and alphabetical
 
         group_tree = SkillGroup.objects.all().exclude(skill_group_id=505)
-        for s in char_sheet['skills']:
+        for s in char_sheet.skills:
             temp_skill = Skill.objects.get(skill_id=s['id'])
             s['name'] = temp_skill.name
             s['group_id'] = temp_skill.group_id
@@ -102,14 +112,14 @@ def character(request):
         # skill_tree = sorted(skill_tree, key=lambda k: k['name'])
 
         #get current skill in training
-        current_training = char.current_training().result
+        current_training = char_object.current_training
         skillname = ''
         current_training['name'] = Skill.objects.get(skill_id=current_training['type_id']).name
 
 
 
         #get skill queue names too and format the numbers nicely
-        skill_queue = char.skill_queue().result
+        skill_queue = char_object.skill_queue
         for x in skill_queue:
             x['name'] = Skill.objects.filter(skill_id=x['type_id'])[0].name
             sec = timedelta(seconds=(x['end_ts'] - time.time()))

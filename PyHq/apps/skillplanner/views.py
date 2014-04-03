@@ -2,6 +2,7 @@ from django.shortcuts import render
 from PyHq.apps.characterscreen.models import Skill, SkillGroup, RequiredSkill
 import json
 from django.http import HttpResponse
+import evelink
 
 # Create your views here.
 def get_skills(request):
@@ -23,8 +24,7 @@ def get_skills(request):
     return HttpResponse(data, mimetype)
 
 def load_skills(request):
-    x = 1
-    if x == 1:
+    if request.is_ajax():
         q = request.GET.get('skill', '')
         skill = Skill.objects.get(name__iexact=q)
         results = []
@@ -47,6 +47,17 @@ def load_skills(request):
         data = 'fail'
     mimetype='application/json'
     return HttpResponse(data, mimetype)
+
+def add_to_queue(request):
+    if request.is_ajax():
+        q = request.GET.get('skill', '')
+        skill = Skill.objects.get(name__iexact=q)
+        results = []
+        skill_json = {}
+        skill_json['name'] = skill.name
+
+
+
 
 
 def skillplanner(request):

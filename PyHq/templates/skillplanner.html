@@ -5,15 +5,15 @@
     source: "api/get_skills/",
     minLength: 2,
     select: function (event, ui) {
-        var skill = ui.item.value
-        var url = "api/load_skills/?skill=" + skill
+        var skill = ui.item.value;
+        var url = "api/load_skills/?skill=" + skill;
         jQuery.getJSON(url, function( data ) {
-            document.getElementById("skillname").innerHTML=data[0].name
-            document.getElementById("skillrank").innerHTML=data[0].rank
-            document.getElementById("primaryattribute").innerHTML=data[0].primaryAttribute
-            document.getElementById("secondaryattribute").innerHTML=data[0].secondaryAttribute
-            document.getElementById("description").innerHTML=data[0].description
-            var prereq_html = ""
+            document.getElementById("skillname").innerHTML=data[0].name;
+            document.getElementById("skillrank").innerHTML=data[0].rank;
+            document.getElementById("primaryattribute").innerHTML=data[0].primaryAttribute;
+            document.getElementById("secondaryattribute").innerHTML=data[0].secondaryAttribute;
+            document.getElementById("description").innerHTML=data[0].description;
+            var prereq_html = "";
             $.each(data[0].prereqs, function(key, value) {
                 prereq_html += "<li>" + key + ": " + value + "</li>"
             });
@@ -24,6 +24,11 @@
     }
   });
 
+$("#add_to_queue").click(function () {
+    var skill = document.getElementById["skills"].value;
+    var url = "api/add_to_queue/?skill=" + skill;
+});
+$("#queue_table").tablesorter();
 
 });
 
@@ -32,12 +37,13 @@
 </script>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="row">
             <div class="col-md-12">
                 <div class="ui-widget">
                     <label for="skills">Skill: </label>
                     <input id="skills">
+                    <button id="add_to_queue">Add To Queue</button>
                 </div>
             </div>
         </div>
@@ -51,7 +57,7 @@
                     <li><a href="#skillpoints" data-toggle="tab">Skill Points</a></li>
                 </ul>
                 <div class="tab-content">
-                    <div class="tab-pane active" id="general">
+                    <div class="tab-pane active roundedbox" style="background-color:#ffffff" id="general">
                         <div class="row">
                             <div class="col-md-6">Skill Name</div>
                             <div class="col-md-6" id="skillname">Skill name update</div>
@@ -82,7 +88,16 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <ul id ="prereq_skills">
-
+                                None
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="deps">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul id="dependent_skills">
+                                    TBD
                                 </ul>
                             </div>
                         </div>
@@ -92,7 +107,27 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-12">
+                        <table id="queue_table" class="tablesorter">
+                        <thead>
+                        <tr>
+                            <th>Skill Name</th>
+                            <th>Cur Lvl</th>
+                            <th>From Lvl</th>
+                            <th>To Lvl</th>
+                            <th>%</th>
+                            <th>Training Time</th>
+                            <th>Time To Complete</th>
+                            <th>Date Completed</th>
+                        </tr>
+                        </thead>
+                        <tbody id="skill_queue">
+                        </tbody>
+                    </table>
+            </div>
+        </div>
 
     </div>
 

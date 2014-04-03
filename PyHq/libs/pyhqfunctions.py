@@ -1,5 +1,5 @@
 import evelink
-from PyHq.apps.characterscreen.models import Skill, SkillGroup, RequiredSkill
+from PyHq.apps.characterscreen.models import *
 
 # kinda klunky, but walks through skill tree dicts to get name for skill id that current_training returns
 # OB-SO_LEEET since everything was moved to models, much faster and easier to work with now
@@ -39,6 +39,43 @@ def EveSkillsToDB():
             skill_insert.save()
         g.save()
     return
+
+def CreateChar(char_id, api, Account):
+    char = evelink.char.Char(char_id=char_id, api=api)
+    char_standings = char.standings().result
+    char_sheet = char.character_sheet().result
+    char_update = Character(id=char_id, name=char_sheet['name'],
+                           race=char_sheet['race'],
+                           bloodline=char_sheet['bloodline'],
+                           ancestry=char_sheet['ancestry'],
+                           skill_points=char_sheet['skillpoints'],
+                           skills=char_sheet['skills'],
+                           account_id=Account, attributes=char_sheet['attributes'],
+                           standings=char_standings, balance=char_sheet['balance'],
+                           skill_queue=char.skill_queue().result,
+                           current_training=char.current_training().result,
+                           clone=char_sheet['clone'], corp=char_sheet['corp'])
+    char_update.save()
+
+def UpdateChar(char_id, api):
+    char = evelink.char.Char(char_id=char_id, api=api)
+    char_standings = char.standings().result
+    char_sheet = char.character_sheet().result
+    char_update = Character.objects.get(id=char_id)
+    char_update.skills = char_sheet['skills']
+    char_update.skill_points = char_sheet['skillpoints']
+    char_update.attributes = char_sheet['attributes']
+    char_update.standings = char_standings
+    char_update.balance = char_sheet['balance']
+    char_update.skill_queue = char.skill_queue().result
+    char_update.current_training = char.current_training().result
+    char_update.clone = char_sheet['clone']
+    char_update.corp = char_sheet['corp']
+    char_update.save()
+
+
+
+
 
 
 
