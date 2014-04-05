@@ -52,3 +52,7 @@ class Character(models.Model):
     current_training = PickledObjectField()
     skill_queue = PickledObjectField()
     corp = PickledObjectField()
+
+class TrainingQueue(models.Model):
+    char_id = models.IntegerField(primary_key=True)
+    queue = PickledObjectField()

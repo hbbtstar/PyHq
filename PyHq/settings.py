@@ -91,3 +91,5 @@ STATICFILES_DIRS = (
 TEMPLATE_DIRS = (
    os.path.join (BASE_DIR, 'PyHq', 'templates'),
 )
+
+LEVEL_BASE = {'L1': 250, 'L2': 1415, 'L3': 8000, 'L4': 45255, 'L5': 256000}

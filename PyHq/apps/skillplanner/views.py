@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from PyHq.apps.characterscreen.models import Skill, SkillGroup, RequiredSkill
+from PyHq.apps.characterscreen.models import *
 import json
 from django.http import HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
 import evelink
 
 # Create your views here.
@@ -52,14 +53,23 @@ def add_to_queue(request):
     if request.is_ajax():
         q = request.GET.get('skill', '')
         skill = Skill.objects.get(name__iexact=q)
+        char = Character.objects.get(char_id=request.session['char_id'])
         results = []
         skill_json = {}
         skill_json['name'] = skill.name
+        for i in char.skills:
+            if i['id'] == skill.skill_id:
+                skill_json['level'] = i['level']
+
 
 
 
 
 
 def skillplanner(request):
-    return render(request, 'skillplanner.html')
+    try:
+        request.session['training_queue'] = TrainingQueue.objects.get(char_id=request.session['char_id'])
+        return render(request, 'skillplanner.html', {'training_queue' : request.session['training_queue'] })
+    except ObjectDoesNotExist:
+        return render(request, 'skillplanner.html')
 
