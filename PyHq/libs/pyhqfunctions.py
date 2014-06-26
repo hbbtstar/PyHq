@@ -75,6 +75,9 @@ def UpdateChar(char_id, api):
 
 
 
+def SpPerHour(primary_attribute, secondary_attribute):
+    # figure out how long a skill will take to train based on given character
+    return
 
 
 

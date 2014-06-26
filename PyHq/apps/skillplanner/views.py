@@ -52,14 +52,25 @@ def load_skills(request):
 def add_to_queue(request):
     if request.is_ajax():
         q = request.GET.get('skill', '')
+        get_from_level = request.GET.get('level', '')
         skill = Skill.objects.get(name__iexact=q)
         char = Character.objects.get(char_id=request.session['char_id'])
         results = []
         skill_json = {}
+        time_to_complete = 0
         skill_json['name'] = skill.name
         for i in char.skills:
             if i['id'] == skill.skill_id:
                 skill_json['level'] = i['level']
+                if get_from_level <= i['level']:
+                    skill_json['to_level'] = i['level'] + 1
+                if request.session['training_queue']:
+                    for s in request.session['training_queue']:
+                        if s['id'] == skill.skill_id:
+                            skill_json['from_level'] = s['to_level']
+                        time_to_complete += s['time_to_complete']
+                skill_json['to_level'] = get_from_level
+
 
 
 
@@ -71,5 +82,6 @@ def skillplanner(request):
         request.session['training_queue'] = TrainingQueue.objects.get(char_id=request.session['char_id'])
         return render(request, 'skillplanner.html', {'training_queue' : request.session['training_queue'] })
     except ObjectDoesNotExist:
+        request.session['training_queue'] = []
         return render(request, 'skillplanner.html')
 

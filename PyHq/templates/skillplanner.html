@@ -26,7 +26,8 @@
 
 $("#add_to_queue").click(function () {
     var skill = document.getElementById["skills"].value;
-    var url = "api/add_to_queue/?skill=" + skill;
+    var skill_url = "api/add_to_queue/?skill=" + skill;
+    var url = skill_url + "?level" + document.getElementById["level_select"].value;
 });
 $("#queue_table").tablesorter();
 
@@ -44,6 +45,14 @@ $("#queue_table").tablesorter();
                     <label for="skills">Skill: </label>
                     <input id="skills">
                     <button id="add_to_queue">Add To Queue</button>
+                    <select id="level_select">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+
                 </div>
             </div>
         </div>
@@ -113,14 +122,14 @@ $("#queue_table").tablesorter();
                         <table id="queue_table" class="tablesorter">
                         <thead>
                         <tr>
-                            <th>Skill Name</th>
-                            <th>Cur Lvl</th>
-                            <th>From Lvl</th>
-                            <th>To Lvl</th>
-                            <th>%</th>
-                            <th>Training Time</th>
-                            <th>Time To Complete</th>
-                            <th>Date Completed</th>
+                            <th id="skill_name">Skill Name</th>
+                            <th id="cur_lvl">Cur Lvl</th>
+                            <th id="from_lvl">From Lvl</th>
+                            <th id="to_lvl">To Lvl</th>
+                            <th id="percentage">%</th>
+                            <th id="training_time">Training Time</th>
+                            <th id="ttc">Time To Complete</th>
+                            <th id="date_completed">Date Completed</th>
                         </tr>
                         </thead>
                         <tbody id="skill_queue">

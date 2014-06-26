@@ -13,6 +13,7 @@ from PyHq.apps.characterscreen.models import *
 
 
 
+# this will have to be rolled into initial setup at some point
 def debug(request):
     EveSkillsToDB()
     eve = evelink.eve.EVE()
@@ -105,21 +106,10 @@ def character(request):
             s['rank'] = temp_skill.rank
         group_tree.order_by('name')
 
-
-
-        #pop out the fake skills group so it doesn't show in the final page
-        # for x in skill_tree:
-        #     if x['skill_group_id'] == 505:
-        #         skill_tree.remove(x)
-
-
-        # skill_tree = sorted(skill_tree, key=lambda k: k['name'])
-
         #get current skill in training
         current_training = char_object.current_training
         skillname = ''
         current_training['name'] = Skill.objects.get(skill_id=current_training['type_id']).name
-
 
 
         #get skill queue names too and format the numbers nicely
@@ -146,7 +136,7 @@ def character(request):
                 modifier = LEVEL_BASE['L5']
             time_span = x['end_ts'] - x['start_ts']
             s_time_span = time.time() - x['start_ts']
-            cur_sp = int(((s_time_span / time_span) * (x['end_sp'] - x['start_sp'])))
+            cur_sp = s_time_span / time_span * (x['end_sp'] - x['start_sp'])
             x['percent_done'] = round(100 * (s_time_span / time_span))
             # x['percent_done'] = round(100*(x['start_ts'] / x['end_ts']))
 
