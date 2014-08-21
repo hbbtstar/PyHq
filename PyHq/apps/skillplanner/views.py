@@ -10,7 +10,7 @@ def get_skills(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
         skills = Skill.objects.filter(name__icontains=q)
-        print skills
+        print(skills)
         results = []
         for skill in skills:
             skill_json = {}
