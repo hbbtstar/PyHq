@@ -109,35 +109,43 @@ def character(request):
         #get current skill in training
         current_training = char_object.current_training
         skillname = ''
-        current_training['name'] = Skill.objects.get(skill_id=current_training['type_id']).name
+        if current_training['level'] is None:
+            current_training['name'] = 'None'
+        else:
+            current_training['name'] = Skill.objects.get(skill_id=current_training['type_id']).name
 
 
         #get skill queue names too and format the numbers nicely
         skill_queue = char_object.skill_queue
-        for x in skill_queue:
-            cur_skill = Skill.objects.get(skill_id=x['type_id'])
-            x['name'] = cur_skill.name
-            x['rank'] = cur_skill.rank
-            for i in char_sheet.skills:
-                if cur_skill.skill_id == i['id']:
-                    x['sp'] = i['skillpoints']
-            sec = timedelta(seconds=(x['end_ts'] - time.time()))
-            d = datetime(1,1,1) + sec
-            x['end_date'] = "{0}d {1}h {2}m {3}s".format(d.day - 1, d.hour, d.minute, d.second)
-        # get us some percentages
-            modifier = LEVEL_BASE['L1']
-            if x['level'] == 2:
-                modifier = LEVEL_BASE['L2']
-            elif x['level'] == 3:
-                modifier = LEVEL_BASE['L3']
-            elif x['level'] == 4:
-                modifier = LEVEL_BASE['L4']
-            elif x['level'] == 5:
-                modifier = LEVEL_BASE['L5']
-            time_span = x['end_ts'] - x['start_ts']
-            s_time_span = time.time() - x['start_ts']
-            cur_sp = s_time_span / time_span * (x['end_sp'] - x['start_sp'])
-            x['percent_done'] = round(100 * (s_time_span / time_span))
+
+        #skip this if skill queue is paused
+        if skill_queue[0]['end_ts'] is not None:
+            for x in skill_queue:
+                cur_skill = Skill.objects.get(skill_id=x['type_id'])
+                x['name'] = cur_skill.name
+                x['rank'] = cur_skill.rank
+                for i in char_sheet.skills:
+                    if cur_skill.skill_id == i['id']:
+                        x['sp'] = i['skillpoints']
+                sec = timedelta(seconds=(x['end_ts'] - time.time()))
+                d = datetime(1,1,1) + sec
+                x['end_date'] = "{0}d {1}h {2}m {3}s".format(d.day - 1, d.hour, d.minute, d.second)
+            # get us some percentages
+                modifier = LEVEL_BASE['L1']
+                if x['level'] == 2:
+                    modifier = LEVEL_BASE['L2']
+                elif x['level'] == 3:
+                    modifier = LEVEL_BASE['L3']
+                elif x['level'] == 4:
+                    modifier = LEVEL_BASE['L4']
+                elif x['level'] == 5:
+                    modifier = LEVEL_BASE['L5']
+                time_span = x['end_ts'] - x['start_ts']
+                s_time_span = time.time() - x['start_ts']
+                cur_sp = s_time_span / time_span * (x['end_sp'] - x['start_sp'])
+                x['percent_done'] = round(100 * (s_time_span / time_span))
+
+
             # x['percent_done'] = round(100*(x['start_ts'] / x['end_ts']))
 
         #get certificates

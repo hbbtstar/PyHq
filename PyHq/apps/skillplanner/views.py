@@ -10,7 +10,6 @@ def get_skills(request):
     if request.is_ajax():
         q = request.GET.get('term', '')
         skills = Skill.objects.filter(name__icontains=q)
-        print(skills)
         results = []
         for skill in skills:
             skill_json = {}
@@ -37,6 +36,14 @@ def load_skills(request):
         skill_json['secondaryAttribute'] = skill.secondaryAttribute.title()
         skill_json['description'] = skill.description
         skill_json['prereqs'] = {}
+
+        # get minimum level the skill can be trained to
+        char = Character.objects.get(id=request.session['char_id'])
+        cur_level = 0
+        for i in char.skills:
+            if i['id'] == skill.skill_id:
+                cur_level = i['level']
+        skill_json['min_level'] = cur_level
         prereq_set = RequiredSkill.objects.filter(from_skill_id=skill.skill_id)
         for i in prereq_set:
             prereq_skill = Skill.objects.get(skill_id=i.required_id)
@@ -51,25 +58,33 @@ def load_skills(request):
 
 def add_to_queue(request):
     if request.is_ajax():
-        q = request.GET.get('skill', '')
-        get_from_level = request.GET.get('level', '')
+        q = request.GET['skill']
+        get_to_level = int(request.GET['level'])
         skill = Skill.objects.get(name__iexact=q)
-        char = Character.objects.get(char_id=request.session['char_id'])
+        char = Character.objects.get(id=request.session['char_id'])
         results = []
-        skill_json = {}
+        skill_json = []
         time_to_complete = 0
-        skill_json['name'] = skill.name
+        skill_json.append(skill.name)
         for i in char.skills:
             if i['id'] == skill.skill_id:
-                skill_json['level'] = i['level']
-                if get_from_level <= i['level']:
-                    skill_json['to_level'] = i['level'] + 1
-                if request.session['training_queue']:
-                    for s in request.session['training_queue']:
-                        if s['id'] == skill.skill_id:
-                            skill_json['from_level'] = s['to_level']
-                        time_to_complete += s['time_to_complete']
-                skill_json['to_level'] = get_from_level
+
+
+                # get skill current level
+                cur_level = i['level']
+                from_level = cur_level
+
+
+                to_level = from_level + 1
+                percentage = '100%'
+                training_time = 'training time'
+                time_to_complete = 0
+                date_completed = '08:52 PM 04/15/2012'
+                skill_json.extend([cur_level, from_level, to_level, percentage, training_time, time_to_complete, date_completed])
+        mimetype = 'application/json'
+        results.append(skill_json)
+        data = json.dumps(results)
+        return HttpResponse(data, mimetype)
 
 
 

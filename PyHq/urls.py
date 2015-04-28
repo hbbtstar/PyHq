@@ -11,5 +11,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^characterscreen/', include('PyHq.apps.characterscreen.urls')),
     url(r'^settings/', include('PyHq.apps.settings.urls')),
-    url(r'^skillplanner/', include('PyHq.apps.skillplanner.urls'))
+    url(r'^skillplanner/', include('PyHq.apps.skillplanner.urls')),
+    #url(r'^industry/', include('PyHq.apps.industry.urls'))
 )

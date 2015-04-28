@@ -79,23 +79,20 @@ def SpPerHour(primary_attribute, secondary_attribute):
     # figure out how long a skill will take to train based on given character
     return
 
-def get_best_order(type_id, region_id, buy_sell, solar_system_ids="0"):
-    # TODO: get best order for given function (highest for buy, lowest for sell)
-    return
+
+class EveMarketData():
+
+    def get_best_order(type_id, region_id, buy_sell, solar_system_ids="0"):
+        # TODO: get best order for given function (highest for buy, lowest for sell)
+        return
 
 
-def get_price(type_ids, region_ids=None, buy_sell="b", solar_system_ids=None):
-    # get average price over 24 hours for given items
-    url = "http://api.eve-marketdata.com/api/item_prices2.json?char_name=demo&type_ids="
-    url += ','.join(type_ids)
-    url += "&region_ids="
-    url += ','.join(region_ids)
-    url += "&solarsystem_ids="
-    url += ",".join(solar_system_ids)
-    url += "&buy_sell="
-    url += buy_sell
-    r = requests.get(url)
-    return r.json()
+    def get_price(type_ids, region_ids=None, buy_sell="b", solar_system_ids=None):
+        # get average price over 24 hours for given items
+        url = ("http://api.eve-marketdata.com/api/item_prices2.json?char_name=demo&type_ids={}&region_ids={}"
+                "&solarsystem_ids={}&buy_sell={}").format(type_ids, region_ids, solar_system_ids, buy_sell)
+
+        return requests.get(url).json()
 
 
 
