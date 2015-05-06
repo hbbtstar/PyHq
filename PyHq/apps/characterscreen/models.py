@@ -7,15 +7,14 @@
 #
 # Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
 # into your database.
-from __future__ import unicode_literals
-
 from django.db import models
+from django.contrib.auth.models import User
 from picklefield.fields import PickledObjectField
 
 class Account(models.Model):
     v_code = models.CharField(max_length=200)
     key_id = models.CharField(max_length=200)
-
+    user = models.ForeignKey(User)
 
 class Skill(models.Model):
     skill_id = models.IntegerField(primary_key=True)
@@ -26,15 +25,22 @@ class Skill(models.Model):
     primaryAttribute = models.CharField(max_length=20, null=True)
     secondaryAttribute = models.CharField(max_length=20, null=True)
 
+    def __str__(self):
+        return "{}".format(self.name)
+
 class SkillGroup(models.Model):
     skill_group_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length="100")
+
+    def __str__(self):
+        return "{}".format(self.name)
 
 class RequiredSkill(models.Model):
     id = models.AutoField(primary_key=True)
     from_skill_id = models.IntegerField()
     required_id = models.IntegerField()
     required_level = models.IntegerField()
+
 
 class Character(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -43,8 +49,7 @@ class Character(models.Model):
     ancestry = models.CharField(max_length=100)
     bloodline = models.CharField(max_length=100)
     skill_points = models.IntegerField()
-    clone = PickledObjectField()
-    balance = models.IntegerField()
+    balance = models.BigIntegerField()
     account_id = models.ForeignKey(Account)
     attributes = PickledObjectField()
     skills = PickledObjectField()
@@ -53,6 +58,18 @@ class Character(models.Model):
     skill_queue = PickledObjectField()
     corp = PickledObjectField()
 
+    def __str__(self):
+        return "".format(self.name)
+
+
 class TrainingQueue(models.Model):
     char_id = models.IntegerField(primary_key=True)
     queue = PickledObjectField()
+
+
+class CharacterSkillPoints(models.Model):
+    skill = models.ForeignKey(Skill)
+    char = models.ForeignKey(Character)
+    points = models.IntegerField()
+    level = models.IntegerField()
+

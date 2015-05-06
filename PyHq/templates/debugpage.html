@@ -1,0 +1,9 @@
+{% extends 'includes_base.html' %}
+{% block page %}
+
+    {% for i in skills %}
+        <div class="row">
+    ID: {{ i.skill_id }}{{ i.name }}
+        </div>
+    {% endfor %}
+{%  endblock %}

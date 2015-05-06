@@ -12,5 +12,7 @@ urlpatterns = patterns('',
     url(r'^characterscreen/', include('PyHq.apps.characterscreen.urls')),
     url(r'^settings/', include('PyHq.apps.settings.urls')),
     url(r'^skillplanner/', include('PyHq.apps.skillplanner.urls')),
-    #url(r'^industry/', include('PyHq.apps.industry.urls'))
+    #url(r'^industry/', include('PyHq.apps.industry.urls')),
+    url(r'^$', include('PyHq.apps.main.urls')),
+    url('^', include('django.contrib.auth.urls'))
 )

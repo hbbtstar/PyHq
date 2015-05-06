@@ -22,7 +22,6 @@ def EveSkillsToDB():
     eve_api = evelink.eve.EVE()
     eve_skill_tree = eve_api.skill_tree().result
     for k, v in eve_skill_tree.items():
-        print(k, v['name'])
         g = SkillGroup(skill_group_id=k, name=v['name'])
         for k2, v2 in v['skills'].items():
             skill_insert = Skill(skill_id=v2['id'], name=v2['name'], description=v2['description'], rank=v2['rank'],
@@ -36,7 +35,6 @@ def EveSkillsToDB():
 
             skill_insert.primaryAttribute = v2['attributes']['primary']
             skill_insert.secondaryAttribute = v2['attributes']['secondary']
-            print(k2, v2['name'])
             skill_insert.save()
         g.save()
     return
