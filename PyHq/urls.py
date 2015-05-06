@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-
+from PyHq.apps.settings import views
 from django.contrib import admin
 admin.autodiscover()
 
@@ -14,5 +14,6 @@ urlpatterns = patterns('',
     url(r'^skillplanner/', include('PyHq.apps.skillplanner.urls')),
     #url(r'^industry/', include('PyHq.apps.industry.urls')),
     url(r'^$', include('PyHq.apps.main.urls')),
-    url('^', include('django.contrib.auth.urls'))
+    url(r'^', include('django.contrib.auth.urls')),
+    url(r'^accounts/profile/', views.settings, name='after_login')
 )

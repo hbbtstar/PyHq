@@ -1,7 +1,7 @@
-{% extends 'generic_base.html' %}
+{% extends 'includes_base.html' %}
 
 {% block content %}
-
+<h1>User Settings</h1>
     {{  changes }}
 <h1>Settings</h1>
 <form action="{% url 'settings' %}" method="post">
