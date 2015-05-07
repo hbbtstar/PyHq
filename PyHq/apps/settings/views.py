@@ -5,37 +5,38 @@ import evelink.eve
 import evelink.account
 from PyHq.apps.characterscreen.models import Account
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def settings(request):
     changes = ""
     keyid = ""
     vcode = ""
+    current_user = User.objects.get(username=request.user.get_username())
+    print(Account.objects.filter(user=current_user).exists())
+    if not request.POST and not Account.objects.filter(user=current_user).exists():
+        first_time = "We can see it's your first time using the program! Enter your keyid and vcode to get started."
+        return render(request, 'settings.html', {'first_time': first_time})
     if request.POST:
+        # how did we even get here?
         if not request.POST.get("keyid") or not request.POST.get("vcode"):
             return render(request, 'settings.html')
+        elif Account.objects.filter(user=request.user).exists():
+            acct = Account.objects.get(user=request.user)
+            acct.key_id = request.POST.get("keyid")
+            acct.v_code = request.POST.get("vcode")
+            acct.save()
+            return render(request, 'settings.html', {'changes': 'Account Saved!'})
         else:
-            keyid = request.POST.get("keyid")
-            vcode = request.POST.get("vcode")
-            print(request.user)
-            user = User.objects.get(username=request.user.username)
+            acct = Account(key_id=request.POST.get("keyid"), v_code=request.POST.get("vcode"), user=request.user)
+            acct.save()
+            return render(request, 'settings.html', {'changes': 'Account Created!'})
+    elif request.user.is_authenticated():
+        acct = Account.objects.get(user=current_user)
+        vcode = acct.v_code
+        keyid = acct.key_id
+        return render(request, "settings.html", {'keyid': keyid, 'vcode': vcode })
 
-            acct = Account.objects.filter(key_id=keyid)
-            if acct:
-                acct[0].v_code = vcode
-                acct[0].key_id = keyid
-                acct[0].save()
-                changes = "Changes Saved!"
-            else:
-                acct = Account(key_id=request.POST.get("keyid"), v_code=request.POST.get("vcode"), user=user)
-                acct.save()
-                changes = "Account Created!"
 
-    acct = Account.objects.all()
-    if acct:
-        keyid = acct[0].key_id
-        vcode = acct[0].v_code
-        request.session['keyid'] = keyid
-        request.session['vcode'] = vcode
-    else:
-        first_time = "We can see it's your first time using the program."
-    return render(request, 'settings.html', {'changes' : changes, 'keyid' : keyid, 'vcode' : vcode})
+
+

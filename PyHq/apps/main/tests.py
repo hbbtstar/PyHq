@@ -18,11 +18,13 @@ class MainTestCase(TestCase):
     def user_login(self, username, password):
         # login user
         c = Client()
-        response = c.post('/login/', {'username': username, 'password': password}, follow=True)
+        response = c.post('/accounts/login/', {'username': username, 'password': password}, follow=True)
         return response
 
     def setUp(self):
         print("Do nothing... yet")
+        self.test_user = User.objects.create_user(username='test_user', email="email@email.com", password='test_pass')
+        self.test_user.save()
         # test_char = Character(name="Test Char", race="Test Race", bloodline="test_line", skill_points=1234567,
         #                       balance=12345678)
         #
@@ -32,6 +34,9 @@ class MainTestCase(TestCase):
         # fake_skill.save()
         # fake_points = CharacterSkillPoints(skill=fake_skill, char=test_char, points=12345, level=3)
         # fake_points.save()
+
+    def tearDown(self):
+        self.test_user.delete()
 
     def login_screen_exists(self):
         # make sure login form exists
@@ -52,26 +57,35 @@ class MainTestCase(TestCase):
         self.assertIn(b"please login", response.content)
 
     def test_main_logged_in(self):
-        #ensure that user is redirected to settings
-        test_user = User.objects.create_user(username='test_user', email="email@email.com", password='test_pass')
-        test_user.save()
+        #ensure that user can log in and is redirected to settings
         c = Client()
         response = self.user_login(username='test_user', password='test_pass')
-        print(test_user.username)
         self.assertIn(b'User Settings', response.content)
 
     def test_first_time(self):
         #check that system detects first time user
         c = Client()
-        self.user_login(username='test_user', password='test_pass')
+        c.logout()
+        c.login(username='test_user', password='test_pass')
         response = c.get("/settings", follow=True)
         self.assertIn(b'first time', response.content)
 
     def test_account_creation(self):
         #check that account creation goes off successfully
         c = Client()
-        self.user_login(username='test_user', password='test_pass')
+        c.logout()
+        Account.objects.all().delete()
+        c.login(username='test_user', password='test_pass')
         response = c.post('/settings/', {'vcode': '345Xgfh43', 'keyid': '122345'})
-        print(response)
-        self.AssertIn(b'Account Created', response.content)
+        self.assertIn(b'Account Created', response.content)
 
+    def test_account_update(self):
+        #if account exists, update it
+                #check that account creation goes off successfully
+        c = Client()
+        c.logout()
+        acct = Account(key_id='132345', v_code='xcdF56Gh', user=User.objects.get(username='test_user'))
+        acct.save()
+        c.login(username='test_user', password='test_pass')
+        response = c.post('/settings/', {'vcode': '345Xgfh43', 'keyid': '122345'})
+        self.assertIn(b'Account Saved', response.content)

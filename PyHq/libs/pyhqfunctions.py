@@ -61,6 +61,13 @@ def UpdateChar(char_id, api):
     char_standings = char.standings().result
     char_sheet = char.character_sheet().result
     char_update = Character.objects.get(id=char_id)
+    for skill in char_sheet['skills']:
+        inserted_skill = Skill.objects.get(skill_id=skill['id'])
+        skillpoints = CharacterSkillPoints.objects.get_or_create(skill=inserted_skill, char=char_update)
+        skillpoints.skillpoints = skill['skillpoints']
+        skillpoints.level = skill['level']
+        skillpoints.save()
+
     char_update.skills = char_sheet['skills']
     char_update.skill_points = char_sheet['skillpoints']
     char_update.attributes = char_sheet['attributes']

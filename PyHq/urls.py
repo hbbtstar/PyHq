@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from PyHq.apps.settings import views
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -15,5 +16,6 @@ urlpatterns = patterns('',
     #url(r'^industry/', include('PyHq.apps.industry.urls')),
     url(r'^$', include('PyHq.apps.main.urls')),
     url(r'^', include('django.contrib.auth.urls')),
-    url(r'^accounts/profile/', views.settings, name='after_login')
+    url(r'^accounts/profile/', views.settings, name='after_login'),
+    url(r'^accounts/login/', auth_views.login, name='login' )
 )

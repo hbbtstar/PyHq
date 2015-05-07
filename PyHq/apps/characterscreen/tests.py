@@ -15,18 +15,18 @@ class CharacterScreenTestCase(TestCase):
 
     def setUp(self):
         print("Do nothing... yet")
-        # test_char = Character(name="Test Char", race="Test Race", bloodline="test_line", skill_points=1234567,
-        #                       balance=12345678)
-        # test_user = User(username='test_user', password='test_pass')
-        # test_user.save()
-        # test_char.save()
-        # test_account = Account(vcode='12345', keyid='12345', user=test_user)
-        # test_account.save()
-        # fake_skill = Skill(name='Fake Skill', group_id=2, description='test description', rank=3,
-        #                    primaryAttribute='Intelligence', secondaryAttribute='Charisma')
-        # fake_skill.save()
-        # fake_points = CharacterSkillPoints(skill=fake_skill, char=test_char, points=12345, level=3)
-        # fake_points.save()
+        test_user = User.objects.create_user(username='test_user', email='f@f.com', password='test_pass')
+        test_user.save()
+        test_account = Account(v_code='12345', key_id='12345', user=test_user)
+        test_account.save()
+        test_char = Character(id=99999, name="Test Char", race="Test Race", bloodline="test_line", skill_points=1234567,
+                              balance=12345678, account_id=test_account)
+        test_char.save()
+        fake_skill = Skill(skill_id=99999, name='Fake Skill', group_id=2, description='test description', rank=3,
+                           primaryAttribute='Intelligence', secondaryAttribute='Charisma')
+        fake_skill.save()
+        fake_points = CharacterSkillPoints(skill=fake_skill, char=test_char, points=12345, level=3)
+        fake_points.save()
 
     def test_skill_update(self):
         #test that the skills are imported and generated correctly
@@ -36,8 +36,8 @@ class CharacterScreenTestCase(TestCase):
 
     def test_skills_appear(self):
         #test that skills appear in dropdown
-        self.user_login(username='test_char', password='test_pass')
         c = Client()
+        c.login(username='test_user', password='test_pass')
         response = c.get('/characterscreen/')
         self.AssertIn(b'Fake Skill', response.content)
 

@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'PyHq.apps.characterscreen',
-    'PyHq.apps.settings'
+    'PyHq.apps.settings',
+    'django_coverage'
 )
 
 MIDDLEWARE_CLASSES = (

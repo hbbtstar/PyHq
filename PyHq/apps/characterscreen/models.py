@@ -50,7 +50,7 @@ class Character(models.Model):
     bloodline = models.CharField(max_length=100)
     skill_points = models.IntegerField()
     balance = models.BigIntegerField()
-    account_id = models.ForeignKey(Account)
+    account_id = models.ForeignKey(Account, related_name='characters')
     attributes = PickledObjectField()
     skills = PickledObjectField()
     standings = PickledObjectField()

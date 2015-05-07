@@ -8,6 +8,7 @@ from PyHq.libs.pyhqfunctions import *
 from datetime import datetime, timedelta
 import time
 from PyHq.settings import LEVEL_BASE
+from django.contrib.auth.decorators import login_required
 
 from PyHq.apps.characterscreen.models import *
 
@@ -27,21 +28,19 @@ def debug(request):
     skills = Skill.objects.all()
     return render(request, 'debugpage.html', {'skills' : skills})
 
+@login_required
 def character(request):
-    keyid = request.session.get('keyid')
+    acct = Account.objects.get(user=User.objects.get(username=request.user.get_username()))
+    keyid = acct.key_id
+    vcode = acct.v_code
     if keyid:
         # get some character stuff
         eve = evelink.eve.EVE()
-        api = evelink.api.API(api_key=(request.session['keyid'], request.session['vcode']))
-        # this is really kludgy, but I have no idea how else to to do it. Doing an account API call
-        # and unpacking the dict for the character ID
-        newacct = evelink.account.Account(api)
-        tempcharlist = newacct.characters()[0]
-        char_id = list(tempcharlist)[0]
-        request.session['char_id'] = char_id
+        api = evelink.api.API(api_key=(keyid, vcode))
+        request.session['char_id'] = Character.objects.get(acct.characters.all()[0].char_id)
+        char_object = Character.objects.get(acct.characters.all()[0])
         # char = evelink.char.Char(char_id=char_id, api=api)
-        UpdateChar(char_id, api)
-        char_object = Character.objects.get(id=char_id)
+        UpdateChar(char_object.char_id, api)
         faction_standings = []
         corporation_standings = []
         agent_standings = []
