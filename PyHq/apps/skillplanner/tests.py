@@ -50,10 +50,48 @@ class SkillPlannerTestCase(TestCase):
         response = c.get('/skillplanner/', {'skill': 'Energy Grid Upgrades'})
         self.assertIn(b'Energy Grid Upgrades', response.content)
 
-    def invalid_skill_error(self):
+    def test_invalid_skill_error(self):
         #make sure invalid skill returns error
         c = Client()
         c.login(username='test_user', password='test_pass')
         response = c.get('/skillplanner/', {'skill': 'Foo Laser Destructor'})
         self.assertIn(b'skill not found', response.content)
+
+    def test_add_to_queue(self):
+        #add to queue button pressed, should add a skill to the training queue only once
+        c = Client()
+        c.login(username='test_user', password='test_pass')
+        response = c.get('/skillplanner/', {'skill': 'Weapon Upgrades', 'level': '5'})
+        self.assertIn(b'<td>Weapon Upgrades</td>', response.content)
+        self.assertEqual(response.content.count(b'<td>Weapon Upgrades</td>'), 1)
+
+    def test_training_queue_loads(self):
+        #check that an existing training queue loads initially
+        c = Client()
+        c.login(username='test_user', password='test_pass')
+        new_skill = TrainingQueueRow.objects.create(char=Character.objects.all()[0],
+                                                    skill=Skill.objects.get(name='Weapon Upgrades'), to_level = 5,
+                                                    from_level = 4, position=1)
+        new_skill.save()
+        response = c.get('/skillplanner/')
+        self.assertIn(b'<td>Weapon Upgrades</td>', response.content)
+
+    def test_skillplanner_get_skill(self):
+        #test get API
+        c = Client()
+        c.login(username='test_user', password='test_pass')
+        response = c.get('/skillplanner/3424')
+        self.assertIn(b'Energy Grid Upgrades', response.content)
+
+    def test_disable_invalid_levels(self):
+        # make sure user cannot select invalid to levels
+        c = Client()
+        c.login(username='test_user', password='test_pass')
+        response = c.get('/skillplanner')
+        self.assertIn(b'disabled>4', response.content)
+
+
+
+
+
 

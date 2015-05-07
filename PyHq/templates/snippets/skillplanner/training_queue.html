@@ -1,0 +1,7 @@
+{% for training_skill in queue %}
+    <tr id="skill{{ forloop.counter }}">
+        <td>{{ training_skill.skill.name }}</td>
+        <td>{{ training_skill.from_level }}</td>
+        <td>{{ training_skill.to_level }}</td>
+    </tr>
+{% endfor %}

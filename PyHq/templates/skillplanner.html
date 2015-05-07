@@ -20,25 +20,40 @@
     }
   });
 
+{#$("#add_to_queue").click(function() {#}
+{#    var skill = $("#skills").val();#}
+{#    var skill_url = "api/add_to_queue/?skill=" + skill;#}
+{#    var url = skill_url + "&level=" + $("#level_select").val();#}
+{#    var skill_html = "<tr>";#}
+{#    jQuery.getJSON(url, function(data) {#}
+{#            $.each(data[0], function(key, value) {#}
+{#            skill_html += "<td>" + value + "</td>";#}
+{#            skill_html += " ";#}
+{#            });#}
+{#            alert(skill_html);#}
+{#            skill_html += "</tr>";#}
+{#    $("#queue_table tbody").append(skill_html);#}
+{#    $("#queue_table tbody").trigger("update");#}
+{#    });#}
+{##}
+//});
+
 $("#add_to_queue").click(function() {
     var skill = $("#skills").val();
-    var skill_url = "api/add_to_queue/?skill=" + skill;
-    var url = skill_url + "&level=" + $("#level_select").val();
-    var skill_html = "<tr>";
-    jQuery.getJSON(url, function(data) {
-            $.each(data[0], function(key, value) {
-            skill_html += "<td>" + value + "</td>";
-            skill_html += " ";
-            });
-            alert(skill_html);
-            skill_html += "</tr>";
-    $("#queue_table tbody").append(skill_html);
-    $("#queue_table tbody").trigger("update");
+    var level = $("#level_select option:selected").val();
+    $.get(window.location, {skill: skill, level: level}, function (data) {
+        if(data.indexOf('error') >= 0)
+        {
+            alert(data);
+        }
+
+            $("#skill_queue").html(data);
+
+
+
+
     });
-
-});
-
-
+})
 });
 
 
@@ -131,7 +146,6 @@ $("#add_to_queue").click(function() {
                         <thead>
                         <tr>
                             <th id="skill_name">Skill Name</th>
-                            <th id="cur_lvl">Cur Lvl</th>
                             <th id="from_lvl">From Lvl</th>
                             <th id="to_lvl">To Lvl</th>
                             <th id="percentage">%</th>
@@ -141,6 +155,13 @@ $("#add_to_queue").click(function() {
                         </tr>
                         </thead>
                         <tbody id="skill_queue">
+                            {% for training_skill in queue %}
+                                <tr id="skill{{ forloop.counter }}">
+                                    <td>{{ training_skill.skill.name }}</td>
+                                    <td>{{ training_skill.from_level }}</td>
+                                    <td>{{ training_skill.to_level }}</td>
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
             </div>

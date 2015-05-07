@@ -1,4 +1,4 @@
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 from PyHq.apps.characterscreen.models import *
 import json
 from django.http import HttpResponse
@@ -90,19 +90,106 @@ def get_skills(request):
 
 
 
+@login_required
+def get_skill(request, skill_id=None):
+    if not skill_id:
+        return redirect('/skillplanner/')
+    else:
+        ret_skill = Skill.objects.get(skill_id=skill_id)
+        return HttpResponse(json.dumps(ret_skill), content_type="application/json")
+
 
 
 @login_required
 def skillplanner(request):
-    if request.GET:
-        if request.GET.get('skill') and not request.GET.get('level'):
-            #make sure the skill is valid
-            try:
-                skill = Skill.objects.get(name=request.GET.get('skill'))
-            except ObjectDoesNotExist:
-                return HttpResponse("skill not found!")
-            print(skill)
-            return render_to_response('snippets/skillpane.html', {'skill': skill})
+    acct = Account.objects.get(user=User.objects.get(username=request.user.get_username()))
+    character = Character.objects.get(account_id=acct)
+    api = evelink.api.API(api_key=(acct.key_id, acct.v_code))
+    char = evelink.char.Char(char_id=character.id, api=api)
+    char_sheet = char.character_sheet().result
+    if request.GET.get('level'):
+        skill_to_add = Skill.objects.get(name=request.GET.get('skill'))
+        # means they want to add the skill to the queue
+        try:
+            skill_to_add = Skill.objects.get(name=request.GET.get('skill'))
+        except ObjectDoesNotExist:
+            return render_to_response('snippets/skillplanner/training_queue.html')
+
+        to_level = int(request.GET.get('level'))
+        from_level = 1
+        # check if character level is higher than to_level. If so, raise to_level to character level + 1
+        for skill in char_sheet['skills']:
+            if skill_to_add.skill_id == skill['id']:
+                from_level = skill['level']
+
+        if from_level >= to_level:
+            to_level = from_level + 1
+
+        # check if queue exists. If so, check if skill is already there and change to and from levels accordingly.
+        # also make sure that to_level is not already 5
+        training_queue = TrainingQueueRow.objects.filter(char=character).order_by('position')
+        position = 1
+        if training_queue.exists():
+            training_queue.reverse()
+            for t_skill in training_queue:
+                if t_skill.skill.skill_id == skill_to_add.skill_id:
+                    if t_skill.to_level == 5:
+                        return HttpResponse('error! Cannot train skill past 5.')
+                    if t_skill.to_level > to_level:
+                        to_level = t_skill.to_level
+                    if t_skill.from_level > from_level:
+                        from_level = t_skill.from_level
+                        break
+            position = training_queue[0].position + 1
+
+        # some sanity checking to make sure that to_level and from_level are not over 6
+        if to_level > 5 or from_level > 4:
+            return HttpResponse('error! Cannot train skill past 5.')
+
+        new_skill = TrainingQueueRow.objects.create(char=character, skill=skill_to_add, from_level=from_level,
+                                            to_level=to_level, position=position)
+        queue = list(training_queue.reverse())
+        new_skill.save()
+        return render_to_response('snippets/skillplanner/training_queue.html', {'queue': queue})
+
+
+
+
+
+
+
+
+
+
+    elif request.GET.get('skill') and not request.GET.get('level'):
+        #make sure the skill is valid
+        try:
+            skill = Skill.objects.get(name=request.GET.get('skill'))
+        except ObjectDoesNotExist:
+            return HttpResponse("skill not found!")
+        return render_to_response('snippets/skillplanner/skillpane.html', {'skill': skill})
+
+    else:
+        try:
+            queue = list(TrainingQueueRow.objects.order_by('position'))
+        except:
+            return render(request,'skillplanner.html')
+
+    queue = TrainingQueueRow.objects.filter(char=character).order_by('position')
+
+    return render(request, 'skillplanner.html', {'queue': queue})
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

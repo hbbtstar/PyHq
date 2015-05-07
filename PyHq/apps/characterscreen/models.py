@@ -10,6 +10,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from picklefield.fields import PickledObjectField
+from ordered_model.models import OrderedModel
 
 class Account(models.Model):
     v_code = models.CharField(max_length=200)
@@ -62,7 +63,12 @@ class Character(models.Model):
         return "".format(self.name)
 
 
-class TrainingQueue(models.Model):
-    char_id = models.IntegerField(primary_key=True)
-    queue = PickledObjectField()
+class TrainingQueueRow(models.Model):
+    id = models.IntegerField(primary_key=True)
+    char = models.ForeignKey(Character)
+    skill = models.ForeignKey(Skill)
+    from_level = models.SmallIntegerField()
+    to_level = models.SmallIntegerField()
+    position = models.SmallIntegerField()
+
 
