@@ -95,10 +95,8 @@ def get_skills(request):
 @login_required
 def skillplanner(request):
     if request.GET:
-        print("How about here?")
         if request.GET.get('skill') and not request.GET.get('level'):
             #make sure the skill is valid
-            print("Did we get here?")
             try:
                 skill = Skill.objects.get(name=request.GET.get('skill'))
             except ObjectDoesNotExist:

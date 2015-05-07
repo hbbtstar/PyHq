@@ -47,6 +47,13 @@ class SkillPlannerTestCase(TestCase):
         #make sure skill div loads
         c = Client()
         c.login(username='test_user', password='test_pass')
-        response = c.post('/skillplanner/', {'skill': 'Energy Grid Upgrades'})
+        response = c.get('/skillplanner/', {'skill': 'Energy Grid Upgrades'})
         self.assertIn(b'Energy Grid Upgrades', response.content)
+
+    def invalid_skill_error(self):
+        #make sure invalid skill returns error
+        c = Client()
+        c.login(username='test_user', password='test_pass')
+        response = c.get('/skillplanner/', {'skill': 'Foo Laser Destructor'})
+        self.assertIn(b'skill not found', response.content)
 

@@ -8,7 +8,12 @@
     select: function (event, ui) {
         var skill = ui.item.value;
         $.get(window.location, {skill: skill}, function (data) {
-            $("#skillpane").html(data);
+            if (data.indexOf('skill not found') != -1)
+            {
+                alert(data);
+            }
+            else
+                $("#skillpane").html(data);
         });
 
 
