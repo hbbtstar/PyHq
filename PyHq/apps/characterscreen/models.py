@@ -66,10 +66,3 @@ class TrainingQueue(models.Model):
     char_id = models.IntegerField(primary_key=True)
     queue = PickledObjectField()
 
-
-class CharacterSkillPoints(models.Model):
-    skill = models.ForeignKey(Skill)
-    char = models.ForeignKey(Character)
-    points = models.IntegerField()
-    level = models.IntegerField()
-

@@ -18,13 +18,13 @@ from PyHq.apps.characterscreen.models import *
 def debug(request):
     EveSkillsToDB()
     eve = evelink.eve.EVE()
-    api = evelink.api.API(api_key=(request.session['keyid'], request.session['vcode']))
+    acct = Account.objects.get(user=User.objects.get(username=request.user.get_username()))
+    api = evelink.api.API(api_key=(acct.key_id, acct.v_code))
     newacct = evelink.account.Account(api)
     tempcharlist = newacct.characters()[0]
     char_id = list(tempcharlist)[0]
     char = evelink.char.Char(char_id=char_id, api=api)
-    tempaccount = Account.objects.get(v_code=request.session['vcode'])
-    CreateChar(char_id, api, tempaccount)
+    CreateChar(char_id, api, acct)
     skills = Skill.objects.all()
     return render(request, 'debugpage.html', {'skills' : skills})
 
@@ -37,21 +37,23 @@ def character(request):
         # get some character stuff
         eve = evelink.eve.EVE()
         api = evelink.api.API(api_key=(keyid, vcode))
-        request.session['char_id'] = Character.objects.get(acct.characters.all()[0].char_id)
-        char_object = Character.objects.get(acct.characters.all()[0])
-        # char = evelink.char.Char(char_id=char_id, api=api)
-        UpdateChar(char_object.char_id, api)
+        char_object = Character.objects.get(account_id=acct)
+        char = evelink.char.Char(char_id=char_object.id, api=api)
+        UpdateChar(char_object.id, api)
         faction_standings = []
         corporation_standings = []
         agent_standings = []
-        char_standings = char_object.standings
-        char_sheet = char_object
+        # load all the results of the API calls
+        char_standings = char.standings().result
+        char_current_training = char.current_training().result
+        char_skill_queue = char.skill_queue().result
+        char_sheet = char.character_sheet().result
         # get effective standings by applying the effective standings equation to our standings
         conn_dip_skills = {}
         conn_dip_skills['diplo'] = 0
         conn_dip_skills['conn'] = 0
 
-        for i in char_sheet.skills:
+        for i in char_sheet['skills']:
             if i['id'] == 3357:
                 conn_dip_skills['diplo'] = i['level']
 
@@ -98,7 +100,7 @@ def character(request):
         #get character sheet and format it for template, make the skills all nice and alphabetical
 
         group_tree = SkillGroup.objects.all().exclude(skill_group_id=505)
-        for s in char_sheet.skills:
+        for s in char_sheet['skills']:
             temp_skill = Skill.objects.get(skill_id=s['id'])
             s['name'] = temp_skill.name
             s['group_id'] = temp_skill.group_id
@@ -106,7 +108,7 @@ def character(request):
         group_tree.order_by('name')
 
         #get current skill in training
-        current_training = char_object.current_training
+        current_training = char_current_training
         skillname = ''
         if current_training['level'] is None:
             current_training['name'] = 'None'
@@ -115,7 +117,7 @@ def character(request):
 
 
         #get skill queue names too and format the numbers nicely
-        skill_queue = char_object.skill_queue
+        skill_queue = char_skill_queue
 
         #skip this if skill queue is paused
         if skill_queue[0]['end_ts'] is not None:
@@ -123,7 +125,7 @@ def character(request):
                 cur_skill = Skill.objects.get(skill_id=x['type_id'])
                 x['name'] = cur_skill.name
                 x['rank'] = cur_skill.rank
-                for i in char_sheet.skills:
+                for i in char_sheet['skills']:
                     if cur_skill.skill_id == i['id']:
                         x['sp'] = i['skillpoints']
                 sec = timedelta(seconds=(x['end_ts'] - time.time()))
