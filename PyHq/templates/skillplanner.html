@@ -7,25 +7,8 @@
     minLength: 2,
     select: function (event, ui) {
         var skill = ui.item.value;
-        var url = "api/load_skills/?skill=" + skill;
-        jQuery.getJSON(url, function( data ) {
-            document.getElementById("skillname").innerHTML=data[0].name;
-            document.getElementById("skillrank").innerHTML=data[0].rank;
-            document.getElementById("primaryattribute").innerHTML=data[0].primaryAttribute;
-            document.getElementById("secondaryattribute").innerHTML=data[0].secondaryAttribute;
-            document.getElementById("description").innerHTML=data[0].description;
-
-            $('#level_select option').each(function(i) {
-               if (this.value < data[0].min_level) {
-                   $(this).attr("disabled", "disabled");
-               }
-            });
-            var prereq_html = "";
-
-            $.each(data[0].prereqs, function(key, value) {
-                prereq_html += "<li>" + key + ": " + value + "</li>"
-            });
-            document.getElementById("prereq_skills").innerHTML=prereq_html
+        $.get(window.location, {skill: skill}, function (data) {
+            $("#skillpane").html(data);
         });
 
 
@@ -85,7 +68,7 @@ $("#add_to_queue").click(function() {
                     <li><a href="#deps" data-toggle="tab">Dependencies</a></li>
                     <li><a href="#skillpoints" data-toggle="tab">Skill Points</a></li>
                 </ul>
-                <div class="tab-content">
+                <div class="tab-content" id="skillpane">
                     <div class="tab-pane active roundedbox" style="background-color:#ffffff" id="general">
                         <div class="row">
                             <div class="col-md-6">Skill Name</div>

@@ -1,0 +1,45 @@
+                        <div class="tab-pane active roundedbox" style="background-color:#ffffff" id="general">
+                        <div class="row">
+                            <div class="col-md-6">Skill Name</div>
+                            <div class="col-md-6" id="skillname">{{ skill.name }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">Skill Rank</div>
+                            <div class="col-md-6" id="skillrank">{{ skill.rank }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">Skill Price</div>
+                            <div class="col-md-6">Skill Price Update</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">Primary Attribute</div>
+                            <div class="col-md-6" id="primaryattribute">{{ skill.primaryAttribute|capfirst }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">Secondary Attribute</div>
+                            <div class="col-md-6" id="secondaryattribute">{{ skill.secondaryAttribute|capfirst }}</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="description">
+                        <div class="row">
+                            <div class="col-md-6" id="description">{{ skill.description }}</div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="prereqs">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul id ="prereq_skills">
+                                None
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="deps">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul id="dependent_skills">
+                                    TBD
+                                </ul>
+                            </div>
+                        </div>
+                    </div>

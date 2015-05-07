@@ -15,7 +15,6 @@ class CharacterScreenTestCase(TestCase):
         return response
 
     def setUp(self):
-        print("Do nothing... yet")
         test_user = User.objects.create_user(username='test_user', email='f@f.com', password='test_pass')
         test_user.save()
         test_account = Account(v_code=V_CODE, key_id=KEY_ID, user=test_user)
@@ -26,6 +25,13 @@ class CharacterScreenTestCase(TestCase):
         fake_skill = Skill(skill_id=99999, name='Fake Skill', group_id=2, description='test description', rank=3,
                            primaryAttribute='Intelligence', secondaryAttribute='Charisma')
         fake_skill.save()
+
+    def test_user_needs_to_log_in(self):
+        #make sure anonymous users can't access the character screen
+        c = Client()
+        c.logout()
+        response = c.get("/characterscreen/", follow=True)
+        self.assertIn(b'please login', response.content)
 
     def test_skill_update(self):
         #test that the skills are imported and generated correctly
