@@ -54,7 +54,14 @@ def CreateChar(char_id, api, Account):
                            skill_queue=char.skill_queue().result,
                            current_training=char.current_training().result,
                            corp=char_sheet['corp'])
+    for s in char_sheet['skills']:
+        if s['published'] is True:
+            char_skill = CharacterSkill.objects.create(id=s['id'], level=s['level'], skill_points=s['skillpoints'],
+                                                       skill=Skill.objects.get(skill_id=s['id']),
+                                                       char=char_update)
+            char_skill.save()
     char_update.save()
+
 
 def UpdateChar(char_id, api):
     char = evelink.char.Char(char_id=char_id, api=api)
@@ -62,6 +69,15 @@ def UpdateChar(char_id, api):
     char_sheet = char.character_sheet().result
     char_update = Character.objects.get(id=char_id)
     char_update.skills = char_sheet['skills']
+    print(CharacterSkill.objects.all())
+    for s in char_sheet['skills']:
+        if s['published'] is True:
+            char_skill = CharacterSkill.objects.get(id=s['id'],
+                                                              skill=Skill.objects.get(skill_id=s['id']),
+                                                              char=char_update)
+            char_skill.skill_points = s['skillpoints']
+            char_skill.level = s['level']
+            char_skill.save()
     char_update.skill_points = char_sheet['skillpoints']
     char_update.attributes = char_sheet['attributes']
     char_update.standings = char_standings

@@ -1,8 +1,10 @@
 from django.shortcuts import render, render_to_response, redirect
 from PyHq.apps.characterscreen.models import *
 import json
+from itertools import chain
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.core import serializers
 from django.contrib.auth.decorators import login_required
 import evelink
 
@@ -91,12 +93,23 @@ def get_skills(request):
 
 
 @login_required
-def get_skill(request, skill_id=None):
-    if not skill_id:
+def get_skill(request, skill_id=None, skill_name=None):
+    if not skill_id and not skill_name:
         return redirect('/skillplanner/')
     else:
-        ret_skill = Skill.objects.get(skill_id=skill_id)
-        return HttpResponse(json.dumps(ret_skill), content_type="application/json")
+        if skill_id and not skill_name:
+            ret_skill = Skill.objects.filter(skill_id=int(skill_id))
+        elif skill_name and not skill_id:
+            ret_skill = Skill.objects.filter(name=skill_name)
+            skill_id = ret_skill[0].skill_id
+
+        acct = Account.objects.get(user=User.objects.get(username=request.user.get_username()))
+        character = Character.objects.get(account_id=acct)
+        char_skill = CharacterSkill.objects.filter(id=ret_skill[0].skill_id, char=character)
+        #(id=skill_id, char=character)
+        combined = list(chain(ret_skill, char_skill))
+        dump = serializers.serialize('json', combined)
+        return HttpResponse(json.dumps(dump), content_type="application/json")
 
 
 

@@ -25,6 +25,8 @@ class CharacterScreenTestCase(TestCase):
         fake_skill = Skill(skill_id=99999, name='Fake Skill', group_id=2, description='test description', rank=3,
                            primaryAttribute='Intelligence', secondaryAttribute='Charisma')
         fake_skill.save()
+        fake_character_skill = CharacterSkill(id=99999, skill=fake_skill, char=test_char, level=5, skill_points=34567)
+        fake_character_skill.save()
 
     def test_user_needs_to_log_in(self):
         #make sure anonymous users can't access the character screen

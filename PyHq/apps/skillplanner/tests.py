@@ -80,15 +80,15 @@ class SkillPlannerTestCase(TestCase):
         #test get API
         c = Client()
         c.login(username='test_user', password='test_pass')
-        response = c.get('/skillplanner/3424')
+        response = c.get('/skillplanner/3424/')
         self.assertIn(b'Energy Grid Upgrades', response.content)
 
-    def test_disable_invalid_levels(self):
-        # make sure user cannot select invalid to levels
+    def test_returning_characterskill(self):
+        # make sure JSON is returned with characterskill
         c = Client()
         c.login(username='test_user', password='test_pass')
-        response = c.get('/skillplanner')
-        self.assertIn(b'disabled>4', response.content)
+        response = c.get('/skillplanner/3424')
+        self.assertIn(b'level', response.content)
 
 
 

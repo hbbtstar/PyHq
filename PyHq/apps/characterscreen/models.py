@@ -71,4 +71,13 @@ class TrainingQueueRow(models.Model):
     to_level = models.SmallIntegerField()
     position = models.SmallIntegerField()
 
+class CharacterSkill(models.Model):
+    id = models.IntegerField(primary_key=True)
+    skill = models.ForeignKey(Skill)
+    char = models.ForeignKey(Character)
+    level = models.SmallIntegerField(null=True)
+    skill_points = models.BigIntegerField(null=True)
+    published = models.BooleanField(default=True)
+
+
 
